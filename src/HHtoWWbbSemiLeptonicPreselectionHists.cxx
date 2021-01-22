@@ -1,4 +1,4 @@
-#include "UHH2/HHtoWWbbSemiLeptonic/include/HHtoWWbbSemiLeptonicHists.h"
+#include "UHH2/HHtoWWbbSemiLeptonic/include/HHtoWWbbSemiLeptonicPreselectionHists.h"
 #include "UHH2/core/include/Event.h"
 #include "UHH2/common/include/Utils.h"
 #include "UHH2/common/include/JetIds.h"
@@ -12,7 +12,7 @@ using namespace std;
 using namespace uhh2;
 using namespace uhh2examples;
 
-HHtoWWbbSemiLeptonicHists::HHtoWWbbSemiLeptonicHists(Context & ctx, const string & dirname): Hists(ctx, dirname){
+HHtoWWbbSemiLeptonicPreselectionHists::HHtoWWbbSemiLeptonicPreselectionHists(Context & ctx, const string & dirname): PreselectionHists(ctx, dirname){
   // book all histograms here
   // jets
   N_jets = book<TH1F>("N_jets", "N_{jets}", 16, -0.5, 15.5);  
@@ -39,6 +39,17 @@ HHtoWWbbSemiLeptonicHists::HHtoWWbbSemiLeptonicHists(Context & ctx, const string
   EMneutral_jet1 = book<TH1F>("EMneutral_jet1", "EMneutral_jet1", 100,0.0,1.0);
   HADcharged_jet1 = book<TH1F>("HADcharged_jet1", "HADcharged_jet1", 100,0.0,1.0);
   HADneutral_jet1 = book<TH1F>("HADneutral_jet1", "HADneutral_jet1", 100,0.0,1.0);
+
+  /*
+  EMcharged_vs_eta_jet1 = book<TH2D>("EMcharged_vs_eta_jet1","EMcharged vs #eta; #eta; EMcharged",100,-6,6,100,0.0,1.0);   
+  EMneutral_vs_eta_jet1 = book<TH2D>("EMneutral_vs_eta_jet1","EMneutral vs #eta; #eta; EMneutral",100,-6,6,100,0.0,1.0);   
+  HADcharged_vs_eta_jet1 = book<TH2D>("HADcharged_vs_eta_jet1","HADcharged vs #eta; #eta; HADcharged",100,-6,6,100,0.0,1.0);   
+  HADneutral_vs_eta_jet1 = book<TH2D>("HADneutral_vs_eta_jet1","HADneutral vs #eta; #eta; HADneutral",100,-6,6,100,0.0,1.0);   
+  EMcharged_vs_PU_jet1 = book<TH2D>("EMcharged_vs_PU_jet1","EMcharged vs PU; PU; EMcharged",100,0,100,100,0.0,1.0);   
+  EMneutral_vs_PU_jet1 = book<TH2D>("EMneutral_vs_PU_jet1","EMneutral vs PU; PU; EMneutral",100,0,100,100,0.0,1.0);   
+  HADcharged_vs_PU_jet1 = book<TH2D>("HADcharged_vs_PU_jet1","HADcharged vs PU; PU; HADcharged",100,0,100,100,0.0,1.0);   
+  HADneutral_vs_PU_jet1 = book<TH2D>("HADneutral_vs_PU_jet1","HADneutral vs PU; PU; HADneutral",100,0,100,100,0.0,1.0);   
+  */
 
   // bjets
   N_bJets_loose= book<TH1F>("N_bJets_loose", "N_{jets}^{CSV loose}", 11, -0.5, 10.5);
@@ -94,7 +105,7 @@ HHtoWWbbSemiLeptonicHists::HHtoWWbbSemiLeptonicHists(Context & ctx, const string
 }
 
 
-void HHtoWWbbSemiLeptonicHists::fill(const Event & event){
+void HHtoWWbbSemiLeptonicPreselectionHists::fill(const Event & event){
   // fill the histograms. Please note the comments in the header file:
   // 'hist' is used here a lot for simplicity, but it will be rather
   // slow when you have many histograms; therefore, better
@@ -117,6 +128,18 @@ void HHtoWWbbSemiLeptonicHists::fill(const Event & event){
     HADcharged_jet1->Fill(jets->at(0).chargedHadronEnergyFraction(), weight);
     HADneutral_jet1->Fill(jets->at(0).neutralHadronEnergyFraction(), weight);
     
+    /*
+    EMcharged_vs_eta_jet1->Fill(jets->at(0).eta(),jets->at(0).chargedEmEnergyFraction(), weight);
+    EMneutral_vs_eta_jet1->Fill(jets->at(0).eta(),jets->at(0).neutralEmEnergyFraction(), weight);
+    HADcharged_vs_eta_jet1->Fill(jets->at(0).eta(),jets->at(0).chargedHadronEnergyFraction(), weight);
+    HADneutral_vs_eta_jet1->Fill(jets->at(0).eta(),jets->at(0).neutralHadronEnergyFraction(), weight);
+    if(!event.isRealData){
+      EMcharged_vs_PU_jet1->Fill(event.genInfo->pileup_TrueNumInteractions(),jets->at(0).chargedEmEnergyFraction(), weight);
+      EMneutral_vs_PU_jet1->Fill(event.genInfo->pileup_TrueNumInteractions(),jets->at(0).neutralEmEnergyFraction(), weight);
+      HADcharged_vs_PU_jet1->Fill(event.genInfo->pileup_TrueNumInteractions(),jets->at(0).chargedHadronEnergyFraction(), weight);
+      HADneutral_vs_PU_jet1->Fill(event.genInfo->pileup_TrueNumInteractions(),jets->at(0).neutralHadronEnergyFraction(), weight);
+    }
+    */
   }
   if(Njets>=2){
     eta_jet2->Fill(jets->at(1).eta(), weight);
@@ -305,4 +328,4 @@ void HHtoWWbbSemiLeptonicHists::fill(const Event & event){
 
 }
 
-HHtoWWbbSemiLeptonicHists::~HHtoWWbbSemiLeptonicHists(){}
+HHtoWWbbSemiLeptonicPreselectionHists::~HHtoWWbbSemiLeptonicPreselectionHists(){}

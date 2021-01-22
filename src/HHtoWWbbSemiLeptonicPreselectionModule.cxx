@@ -21,7 +21,7 @@
 #include "UHH2/common/include/MuonIds.h"
 
 #include "UHH2/HHtoWWbbSemiLeptonic/include/HHtoWWbbSemiLeptonicSelections.h"
-#include "UHH2/HHtoWWbbSemiLeptonic/include/HHtoWWbbSemiLeptonicHists.h"
+#include "UHH2/HHtoWWbbSemiLeptonic/include/HHtoWWbbSemiLeptonicPreselectionHists.h"
 #include "UHH2/HHtoWWbbSemiLeptonic/include/HHtoWWbbSemiLeptonicGenHists.h"
 #include <UHH2/HHtoWWbbSemiLeptonic/include/ModuleBASE.h>
 
@@ -64,10 +64,11 @@ namespace uhh2examples {
     for(const auto & tag : tags){
       cout << "booking histograms with tag " << tag << endl;
       string mytag = tag+"_General";
-      book_HFolder(mytag, new HHtoWWbbSemiLeptonicHists(ctx,mytag));
-      mytag = tag+"_Signal";
-      
-      book_HFolder(mytag, new HHtoWWbbSemiLeptonicGenHists(ctx,mytag));
+      book_HFolder(mytag, new HHtoWWbbSemiLeptonicPreselectionHists(ctx,mytag));
+      if(is_signal) {
+	mytag = tag+"_Signal"; 
+	book_HFolder(mytag, new HHtoWWbbSemiLeptonicGenHists(ctx,mytag));
+      }
       /*
       mytag = tag+"_Muons";
       book_HFolder(mytag, new MuonHists(ctx,mytag));
@@ -135,11 +136,10 @@ HHtoWWbbSemiLeptonicPreselectionModule::HHtoWWbbSemiLeptonicPreselectionModule(C
     // Object IDs
     //cout << "Year: " << year << endl;
     JetId jet_pfid = JetPFID(JetPFID::WP_TIGHT_CHS);
-    EleId = AndId<Electron>(ElectronID_Fall17_tight, PtEtaCut(30.0, 2.4));
-    if (year == Year::is2016v2) MuId = AndId<Muon>(MuonID(Muon::Tight), PtEtaCut(24.0, 5.0), MuonIso(0.15));
+    EleId = AndId<Electron>(ElectronID_Fall17_tight, PtEtaCut(24.0, 2.4));
+    if (year == Year::is2016v2) MuId = AndId<Muon>(MuonID(Muon::Tight), PtEtaCut(24.0, 2.4), MuonIso(0.15));
     else                        MuId = AndId<Muon>(MuonID(Muon::CutBasedIdTight), PtEtaCut(24.0, 2.4), MuonID(Muon::PFIsoTight));
-    // else                        MuId = AndId<Muon>(MuonID(Muon::CutBasedIdTight), PtEtaCut(5.0, 5.0), MuonIso(0.50));
-    Jet_ID = AndId<Jet>(jet_pfid, PtEtaCut(10.0, 2.4));
+    Jet_ID = AndId<Jet>(jet_pfid, PtEtaCut(30.0, 2.4));
 
 
     // BTagging
@@ -214,15 +214,11 @@ HHtoWWbbSemiLeptonicPreselectionModule::HHtoWWbbSemiLeptonicPreselectionModule(C
     if(!njet3_sel->passes(event)) return false;
     fill_histograms(event, "3Jets");
 
-    if(!nbtag_medium_sel->passes(event)) return false;
-    fill_histograms(event, "1Bjet");
-
-    // will probably not enforce this cut in my analysis
-    //if(!njet4_sel->passes(event)) return false;
-
-
-    if(!njet4_sel->passes(event)) fill_histograms(event, "4Jets");
-
+    // take these cuts out of the selection, but keep the histograms
+    if(nbtag_medium_sel->passes(event)) {
+      fill_histograms(event, "1Bjet");
+      if(njet4_sel->passes(event)) fill_histograms(event, "4Jets");
+    }
 
     return true;
 

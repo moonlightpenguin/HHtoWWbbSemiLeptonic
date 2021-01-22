@@ -1,6 +1,6 @@
 #pragma once
 
-#include "UHH2/core/include/Hists.h"
+#include "UHH2/core/include/PreselectionHists.h"
 
 namespace uhh2examples {
 
@@ -11,21 +11,25 @@ namespace uhh2examples {
    * many histograms. Therefore, it is recommended to use histogram
    * pointers as member data instead, like in 'common/include/ElectronHists.h'.
    */
-  class HHtoWWbbSemiLeptonicHists: public uhh2::Hists {
+  class HHtoWWbbSemiLeptonicPreselectionHists: public uhh2::Hists {
   public:
     // use the same constructor arguments as Hists for forwarding:
-    HHtoWWbbSemiLeptonicHists(uhh2::Context & ctx, const std::string & dirname);
+    HHtoWWbbSemiLeptonicPreselectionHists(uhh2::Context & ctx, const std::string & dirname);
 
     virtual void fill(const uhh2::Event & ev) override;
-    virtual ~HHtoWWbbSemiLeptonicHists();
+    virtual ~HHtoWWbbSemiLeptonicPreselectionHists();
 
   protected:
+    //TODO with all histograms
 
     // Jets
     TH1F *N_jets, *N_PU, *pt_jets, *pt_jet1, *pt_jet2, *pt_jet3, *pt_jet4, *eta_jets, *eta_jets_rebin, *eta_jet1, *eta_jet2, *eta_jet3, *eta_jet4;
     TH2F *N_jet_vs_pt_jet, *N_jet_vs_eta_jet;
 
     TH1F *EMcharged_jet1, *EMneutral_jet1, *HADcharged_jet1, *HADneutral_jet1;
+
+    // TH2D *EMcharged_vs_eta_jet1, *EMneutral_vs_eta_jet1, *HADcharged_vs_eta_jet1, *HADneutral_vs_eta_jet1, *EMcharged_vs_PU_jet1, *EMneutral_vs_PU_jet1, *HADcharged_vs_PU_jet1, *HADneutral_vs_PU_jet1, 
+
 
     // bjets
     TH1F *N_bJets_loose, *N_bJets_med, *N_bJets_tight, *N_deepjet_loose, *N_deepjet_med, *N_deepjet_tight, *DeltaR_bjets;
