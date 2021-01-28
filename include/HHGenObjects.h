@@ -49,10 +49,10 @@ class HHGenObjects {
 
 class HHGenObjectsProducer: public uhh2::AnalysisModule {
  public:
-  explicit HHGenObjectsProducer(uhh2::Context & ctx, const std::string & name = "HHgen", bool throw_on_failure=true);
+  explicit HHGenObjectsProducer(uhh2::Context & ctx, const std::string & name = "HHgenobjects", bool throw_on_failure=true);
   virtual bool process(uhh2::Event & event) override;
 
  private: 
-  uhh2::Event::Handle<HHGenObjects> h_HHgen;
+  uhh2::Event::Handle<HHGenObjects> h_HHgenobjects;
   bool throw_on_failure;
 };

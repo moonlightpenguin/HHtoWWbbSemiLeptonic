@@ -23,6 +23,7 @@
 #include "UHH2/HHtoWWbbSemiLeptonic/include/HHtoWWbbSemiLeptonicSelections.h"
 #include "UHH2/HHtoWWbbSemiLeptonic/include/HHtoWWbbSemiLeptonicPreselectionHists.h"
 #include "UHH2/HHtoWWbbSemiLeptonic/include/HHtoWWbbSemiLeptonicGenHists.h"
+#include "UHH2/HHtoWWbbSemiLeptonic/include/HHGenObjects.h"
 #include <UHH2/HHtoWWbbSemiLeptonic/include/ModuleBASE.h>
 
 
@@ -47,6 +48,13 @@ namespace uhh2examples {
     // to avoid memory leaks.
     std::unique_ptr<Selection> njet4_sel, njet3_sel, dijet_sel, electron_sel, muon_sel, noElectron_sel, noMuon_sel, st_sel, nbtag_medium_sel;
     
+
+
+    // gen level stuff
+    unique_ptr<uhh2::AnalysisModule> HHgenprod;
+    uhh2::Event::Handle<HHGenObjects> h_HHgenobjects;
+
+
     ElectronId EleId;
     JetId Jet_ID;
     MuonId MuId;
@@ -114,12 +122,15 @@ HHtoWWbbSemiLeptonicPreselectionModule::HHtoWWbbSemiLeptonicPreselectionModule(C
     string testvalue = ctx.get("TestKey", "<not set>");
     cout << "TestKey in the configuration was: " << testvalue << endl;
     
-    // If running in SFrame, the keys "dataset_version", "dataset_type", "dataset_lumi",
-    // and "target_lumi" are set to the according values in the xml file. For CMSSW, these are
-    // not set automatically, but can be set in the python config file.
     for(auto & kv : ctx.get_all()){
       cout << " " << kv.first << " = " << kv.second << endl;
     }
+
+    // Gen level stuff
+    const string HHgen_label("HHgenobjects");
+    HHgenprod.reset(new HHGenObjectsProducer(ctx, HHgen_label, true));
+    h_HHgenobjects = ctx.get_handle<HHGenObjects>(HHgen_label);
+
 
     is_mc = ctx.get("dataset_type") == "MC";
 
@@ -186,6 +197,13 @@ HHtoWWbbSemiLeptonicPreselectionModule::HHtoWWbbSemiLeptonicPreselectionModule(C
   bool HHtoWWbbSemiLeptonicPreselectionModule::process(Event & event) {
     //cout << "HHtoWWbbSemiLeptonicModule: Starting to process event (runid, eventid) = (" << event.run << ", " << event.event << "); weight = " << event.weight << endl;
     
+    if(is_signal){
+      HHgenprod->process(event);
+      const auto & HHgen = event.get(h_HHgenobjects);    
+      LorentzVector H_bb = HHgen.H_bb().v4();
+      cout << "gen level mH_bb: " << H_bb.M() << endl;
+    }
+
 
     fill_histograms(event,"NoCuts");
     bool pass_common = common->process(event);

@@ -12,7 +12,7 @@ using namespace std;
 using namespace uhh2;
 using namespace uhh2examples;
 
-HHtoWWbbSemiLeptonicPreselectionHists::HHtoWWbbSemiLeptonicPreselectionHists(Context & ctx, const string & dirname): PreselectionHists(ctx, dirname){
+HHtoWWbbSemiLeptonicPreselectionHists::HHtoWWbbSemiLeptonicPreselectionHists(Context & ctx, const string & dirname): Hists(ctx, dirname){
   // book all histograms here
   // jets
   N_jets = book<TH1F>("N_jets", "N_{jets}", 16, -0.5, 15.5);  

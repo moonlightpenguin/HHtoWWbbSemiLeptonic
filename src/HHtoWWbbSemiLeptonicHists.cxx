@@ -83,13 +83,27 @@ HHtoWWbbSemiLeptonicHists::HHtoWWbbSemiLeptonicHists(Context & ctx, const string
 
 
   // Mass reconstruction
-  MT_HH = book<TH1F>("MT_HH", "M_{T}^{HH} [GeV]", 50, 0, 500);
-  MT_HH_rebin = book<TH1F>("MT_HH_rebin", "M_{T}^{HH} [GeV]", 50, 0, 1000);
-  MT_HH_test = book<TH1F>("MT_HH_test", "M_{T}^{HH} [GeV] (test)", 50, 0, 500);
-  MT_HH_Vergleich = book<TH1F>("MT_HH_Vergleich", "M_{T}^{HH} [GeV] (mT root definition)", 50, 0, 500);
+  MHH = book<TH1F>("MHH", "M^{HH} [GeV]", 50, 0, 500);
+  CHI2 = book<TH1F>("CHI2", "#chi^{2}", 100, 0, 500);
+
+  MH_bb = book<TH1F>("MH_bb", "M_{H}^{bb} [GeV]", 50, 0, 500);
+  CHI2_H_bb = book<TH1F>("CHI2_H_bb", "#chi_{H->bb}^{2}", 100, 0, 500);
 
 
   sum_event_weights = book<TH1F>("sum_event_weights", "BinContent = sum(eventweights)", 1, 0.5, 1.5);
+
+
+  // for reconstructed HH Mass
+
+  h_is_mHH_reconstructed = ctx.get_handle<bool>("is_mHH_reconstructed");
+  h_mHH = ctx.get_handle<float>("mHH");
+  h_chi2 = ctx.get_handle<float>("chi2");
+  h_mH_bb = ctx.get_handle<float>("mH_bb");
+  h_chi2_H_bb = ctx.get_handle<float>("chi2_H_bb");
+  h_mH_WW = ctx.get_handle<float>("mH_WW");
+  h_chi2_H_WW = ctx.get_handle<float>("chi2_H_WW");
+  h_mH_mean = ctx.get_handle<float>("mH_mean");
+
 
 }
 
@@ -242,66 +256,32 @@ void HHtoWWbbSemiLeptonicHists::fill(const Event & event){
   STlep_rebin->Fill(st_lep, weight);
 
 
-  // Transverse Mass
-  // only if there is a lepton
-  if(Nmuons >= 1 or Nelectrons>= 1) {
-    vector<Jet>* JetVector = event.jets;
-    // find the two highest-pt bjets, combine them to H1
-    // find the two highest-pt non-bjets, combine them to W1
-
-    LorentzVector H1;
-    LorentzVector W1;
-
-    for (unsigned int i=0; i< JetVector->size(); i++){
-      int j=0;
-      int k=0;
-      if(DeepjetMedium(JetVector->at(i),event)){
-	if(j==2) break;
-	H1 = H1 + JetVector->at(i).v4();
-	j++;
-      }
-      else{
-	if(k==2) break;
-	W1 = W1 + JetVector->at(i).v4();
-	k++;
-      }
-    }
-
-
-    // combine mu and met to W2
-    LorentzVector lepton;
-    if (Nmuons >=1) lepton = event.muons->at(0).v4();
-    else lepton = event.electrons->at(0).v4(); // if there are no muons, there must be electrons
-    LorentzVector MET = event.met->v4();
-    LorentzVector W2 = lepton + MET;
-
-    // combine W1 and W2 to H2
-    LorentzVector H2 = W1 + W2;
-    LorentzVector HH = H1 + H2;
-    // combine H1 and H2 to mT
-    TVector3 H1_pT = toVector(H1);
-    H1_pT.SetZ(0);
-    TVector3 H2_pT = toVector(H2);
-    H2_pT.SetZ(0);
-    double H1_E = H1.Et(); // ET function from root
-    double H2_E = H2.Et();
-    double m_H = 125; // 125.09
-    double H1_ET = sqrt(pow(m_H,2) + H1_pT*H1_pT); // definition of ET from wikipedia
-    double H2_ET = sqrt(pow(m_H,2) + H2_pT*H2_pT);
-
-
-    double mT = sqrt(pow(H1_E + H2_E, 2) - (H1_pT + H2_pT)*(H1_pT + H2_pT));
-    double mT1 = sqrt(pow(H1_ET + H2_ET, 2) - (H1_pT + H2_pT)*(H1_pT + H2_pT));
-
-
-    MT_HH->Fill(mT, weight);
-    MT_HH_rebin->Fill(mT, weight);
-
-    MT_HH_test->Fill(mT1, weight);
-
-
-    MT_HH_Vergleich->Fill(HH.Mt(), weight);// vergleichen mit mt
+  // reconstructed mass
+  bool is_mHH_reconstructed = false;
+  if(event.is_valid(h_is_mHH_reconstructed)){
+    // cout << "Line: " << __LINE__ << endl;
+    is_mHH_reconstructed = event.get(h_is_mHH_reconstructed);
   }
+  // cout << "is_mHH_reconstructed: " << is_mHH_reconstructed << endl;
+
+
+  if(is_mHH_reconstructed) {
+    double chi2 = event.get(h_chi2);
+    double mHH = event.get(h_mHH);
+
+    CHI2->Fill(chi2, weight);
+    MHH->Fill(mHH, weight);
+
+    double chi2_H_bb = event.get(h_chi2_H_bb);
+    double mH_bb = event.get(h_mH_bb);
+    //cout << "mH_bb: " << mH_bb << endl;
+   
+    CHI2_H_bb->Fill(chi2_H_bb, weight);
+    MH_bb->Fill(mH_bb, weight); 
+    
+
+  }
+
 
 }
 

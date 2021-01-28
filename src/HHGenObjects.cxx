@@ -68,14 +68,16 @@ HHGenObjects::HHGenObjects(const vector<GenParticle> & genparticles, bool throw_
 
 	if(isChargedLepton(l_Id) && isChargedLepton(n_Id)) {
 	  //cout << "PHOTON RADIATION! (l)" << endl;
-	  for(unsigned int i=0; i<genparticles.size(); i++) {
-	    const GenParticle & gp = genparticles[i];
+	  for(unsigned int j=0; j<genparticles.size(); j++) {
+	    const GenParticle & gp = genparticles[j];
 	   
 	    int gp_Id = gp.pdgId();
 	    if(isNeutrino(gp_Id) && abs(gp.mother(&genparticles,1)->pdgId()) == 24) {
 	      neutrino = &gp;
-	      lepton = &genparticles[i-1]; // lepton is always right before it's associated neutrino
-	      //cout << lepton->pdgId() << endl;
+	      if(isNeutrino(genparticles[j-1].pdgId()) && abs(genparticles[j-1].mother(&genparticles,1)->pdgId()) == 24) {
+		lepton = &genparticles[j-1]; // lepton is always right before it's associated neutrino
+		//cout << lepton->pdgId() << endl;
+	      }
 	    }
 	  }
 	}
@@ -193,10 +195,10 @@ bool HHGenObjects::isNeutrino(int id){
 
 
 HHGenObjectsProducer::HHGenObjectsProducer(uhh2::Context & ctx, const std::string & name, bool throw_on_failure): throw_on_failure(throw_on_failure) {
-  h_HHgen = ctx.get_handle<HHGenObjects>(name);
+  h_HHgenobjects = ctx.get_handle<HHGenObjects>(name);
 }
 
 bool HHGenObjectsProducer::process(Event & event) {
-  event.set(h_HHgen, HHGenObjects(*event.genparticles, throw_on_failure));
+  event.set(h_HHgenobjects, HHGenObjects(*event.genparticles, throw_on_failure));
   return true;
 }

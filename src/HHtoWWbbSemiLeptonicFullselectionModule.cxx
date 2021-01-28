@@ -28,9 +28,19 @@
 // my own classes
 #include "UHH2/HHtoWWbbSemiLeptonic/include/HHtoWWbbSemiLeptonicSelections.h"
 #include "UHH2/HHtoWWbbSemiLeptonic/include/HHtoWWbbSemiLeptonicHists.h"
-#include "UHH2/HHtoWWbbSemiLeptonic/include/MassReconstruction.h"
+#include "UHH2/HHtoWWbbSemiLeptonic/include/HHtoWWbbSemiLeptonicGenHists.h"
+#include "UHH2/HHtoWWbbSemiLeptonic/include/HHtoWWbbSemiLeptonicMatchedHists.h"
+
+
 //#include "UHH2/HHtoWWbbSemiLeptonic/include/HHtoWWbbSemiLeptonicModules.h"
 //#include "UHH2/HHtoWWbbSemiLeptonic/include/HHtoWWbbSemiLeptonicPDFHists.h"
+#include "UHH2/HHtoWWbbSemiLeptonic/include/HHGenObjects.h"
+#include "UHH2/HHtoWWbbSemiLeptonic/include/HHGenRecoMatching.h"
+
+#include "UHH2/HHtoWWbbSemiLeptonic/include/HHMassReconstruction.h"
+#include "UHH2/HHtoWWbbSemiLeptonic/include/HHReconstructionHypothesis.h"
+#include "UHH2/HHtoWWbbSemiLeptonic/include/HHReconstructionHypothesisDiscriminators.h"
+
 #include <UHH2/HHtoWWbbSemiLeptonic/include/ModuleBASE.h>
 
 
@@ -52,21 +62,48 @@ namespace uhh2examples {
 
     std::unique_ptr<CommonModules> common;
 
+    unique_ptr<Hists> h_btageff;
+    std::unique_ptr<AnalysisModule> SF_muonIso, SF_muonID, SF_muonTrigger, SF_btag;
     std::unique_ptr<Selection> nbtag_medium_sel, muon_trigger_sel1, muon_trigger_sel2;
-
+    
 
     unique_ptr<HHtoWWbbMassReconstruction> mHH_reco;
+    unique_ptr<HHChi2Discriminator> chi2_module;
+
+    // gen level stuff
+    unique_ptr<uhh2::AnalysisModule> HHgenprod;
+    uhh2::Event::Handle<HHGenObjects> h_HHgenobjects;
+
+    unique_ptr<uhh2::AnalysisModule> HHgenrecoprod;
+    uhh2::Event::Handle<HHGenRecoMatching> h_HHgenreco;
+
+
+
+    // mass reco stuff
     uhh2::Event::Handle<bool> h_is_mHH_reconstructed;
-    uhh2::Event::Handle<float> h_mHH;
+    uhh2::Event::Handle<float> h_mHH, h_chi2;
+    uhh2::Event::Handle<float> h_mH_bb, h_chi2_H_bb;
+    uhh2::Event::Handle<float> h_mH_WW, h_chi2_H_WW;
+    uhh2::Event::Handle<float> h_mH_mean;
+
 
     JetId Btag_loose;
     BTag::algo btag_algo;
     BTag::wp wp_btag_loose, wp_btag_medium, wp_btag_tight;
 
     bool is_mc, do_permutations;
+    bool is_signal;
     string s_permutation;
 
     uhh2::Event::Handle<float> h_eventweight_lumi, h_eventweight_final;
+
+
+
+    // systematic uncertainties
+    string Sys_MuonID, Sys_MuonIso;
+    string Sys_BTag;
+    string Sys_PU;
+
 
     TString dataset_version;
     Year year;
@@ -79,6 +116,12 @@ namespace uhh2examples {
       cout << "booking histograms with tag " << tag << endl;
       string mytag = tag+"_General";
       book_HFolder(mytag, new HHtoWWbbSemiLeptonicHists(ctx,mytag));
+      if(is_signal){
+	mytag = tag+"_Signal"; 
+	book_HFolder(mytag, new HHtoWWbbSemiLeptonicGenHists(ctx,mytag));
+	mytag = tag+"_GenRecoMatched"; 
+	book_HFolder(mytag, new HHtoWWbbSemiLeptonicMatchedHists(ctx,mytag));
+      }
 /*
       mytag = tag+"_Muons";
       book_HFolder(mytag, new MuonHists(ctx,mytag));
@@ -95,6 +138,12 @@ namespace uhh2examples {
   void HHtoWWbbSemiLeptonicFullselectionModule::fill_histograms(uhh2::Event& event, string tag){
     string mytag = tag+"_General";
     HFolder(mytag)->fill(event);
+      if(is_signal){
+	mytag = tag+"_Signal"; 
+	HFolder(mytag)->fill(event);
+	mytag = tag+"_GenRecoMatched"; 
+	HFolder(mytag)->fill(event);
+      }
 /*
     mytag = tag+"_Muons";
     HFolder(mytag)->fill(event);
@@ -110,7 +159,7 @@ namespace uhh2examples {
 
 
   HHtoWWbbSemiLeptonicFullselectionModule::HHtoWWbbSemiLeptonicFullselectionModule(Context & ctx){
-
+    
     for(auto & kv : ctx.get_all()){
       cout << " " << kv.first << " = " << kv.second << endl;
     }
@@ -118,15 +167,30 @@ namespace uhh2examples {
     h_eventweight_lumi = ctx.declare_event_output<float>("eventweight_lumi");
     h_eventweight_final = ctx.declare_event_output<float>("eventweight_final");
 
+    // Gen level stuff
+    const string HHgen_label("HHgenobjects");
+    HHgenprod.reset(new HHGenObjectsProducer(ctx, HHgen_label, true));
+    h_HHgenobjects = ctx.get_handle<HHGenObjects>(HHgen_label);
+    const string HHgenreco_label("HHgenreco");
+    HHgenrecoprod.reset(new HHGenRecoProducer(ctx, HHgenreco_label, true));
+    h_HHgenreco = ctx.get_handle<HHGenRecoMatching>(HHgenreco_label);
+
     // for mass reco
     h_is_mHH_reconstructed = ctx.declare_event_output<bool>("is_mHH_reconstructed");
     h_mHH = ctx.declare_event_output<float>("mHH");
+    h_chi2 = ctx.declare_event_output<float>("chi2");
 
+    h_mH_bb = ctx.declare_event_output<float>("mH_bb");
+    h_chi2_H_bb = ctx.declare_event_output<float>("chi2_H_bb");
+    h_mH_WW = ctx.declare_event_output<float>("mH_WW");
+    h_chi2_H_WW = ctx.declare_event_output<float>("chi2_H_WW");
+    h_mH_mean = ctx.declare_event_output<float>("mH_mean");
 
 
     is_mc = ctx.get("dataset_type") == "MC";
     year = extract_year(ctx);
-
+    TString dataset_version = ctx.get("dataset_version");
+    is_signal = dataset_version.Contains("HHtoWWbb");
 
     // BTagging
     btag_algo = BTag::DEEPJET;
@@ -170,8 +234,25 @@ namespace uhh2examples {
 
 
     // initialize HH Mass Reconstruction
-    mHH_reco.reset(new HHtoWWbbMassReconstruction(ctx));
     
+    mHH_reco.reset(new HHtoWWbbMassReconstruction(ctx));
+    chi2_module.reset(new HHChi2Discriminator(ctx, "HHHypotheses"));
+
+    // systematic uncertainties
+
+    Sys_MuonID = ctx.get("Systematic_MuonID");
+    Sys_MuonIso = ctx.get("Systematic_MuonIso");
+    Sys_BTag = ctx.get("Systematic_BTag");
+    Sys_PU = ctx.get("Systematic_PU");
+
+
+    // scale factors
+
+    SF_muonID.reset(new MCMuonScaleFactor(ctx, "/nfs/dust/cms/user/frahmmat/CMSSW_10_2_X_v2/CMSSW_10_2_17/src/UHH2/common/data/2016/MuonID_EfficienciesAndSF_average_RunBtoH.root", "NUM_TightID_DEN_genTracks_eta_pt", 0., "id", false, Sys_MuonID));
+    SF_muonIso.reset(new MCMuonScaleFactor(ctx, "/nfs/dust/cms/user/frahmmat/CMSSW_10_2_X_v2/CMSSW_10_2_17/src/UHH2/common/data/2016/MuonIso_EfficienciesAndSF_average_RunBtoH.root", "NUM_TightRelIso_DEN_TightIDandIPCut_eta_pt", 0., "iso", false, Sys_MuonIso));
+    // SF_muonTrigger.reset(new MuonTriggerWeights(ctx, "/nfs/dust/cms/user/frahmmat/CMSSW_10_2_X_v2/CMSSW_10_2_17/src/UHH2/common/data/2016/MuonTrigger_EfficienciesAndSF_average_RunBtoH.root", "IsoMu24_OR_IsoTkMu24_PtEtaBins"), 0.);
+
+    // SF_btag.reset(new MCBTagScaleFactor(ctx, btag_algo, wp_btag_medium, "jets", Sys_BTag)); // comment out when re-doing SF_btag
 
 
     // CommonModules
@@ -179,7 +260,7 @@ namespace uhh2examples {
     common->disable_lumisel();
     common->disable_jersmear();
     common->disable_jec();
-    common->init(ctx);
+    common->init(ctx, Sys_PU);
 
     // Selections
     nbtag_medium_sel.reset(new NJetSelection(2, -1, DeepjetMedium));
@@ -190,13 +271,41 @@ namespace uhh2examples {
     vector<string> histogram_tags = {"Cleaner", "Trigger", "BTag", "Finalselection_mHH_reconstructed"};
     book_histograms(ctx, histogram_tags);
 
+    h_btageff.reset(new BTagMCEfficiencyHists(ctx, "BTagEff", DeepjetMedium));
   }
 
 
   bool HHtoWWbbSemiLeptonicFullselectionModule::process(Event & event) {
+    // cout << "Fullselection: process" << endl;
+    //cout << "Line: " << __LINE__ << endl;
+
+    HHgenprod->process(event);
+    HHgenrecoprod->process(event);
+
+    event.set(h_is_mHH_reconstructed, false);
+    event.set(h_mHH, -1);
+    event.set(h_chi2, -1);
+
+    event.set(h_mH_bb, -1);
+    event.set(h_chi2_H_bb, -1);
+    event.set(h_mH_WW, -1);
+    event.set(h_chi2_H_WW, -1);
+    event.set(h_mH_mean, -1);
 
 
+    //cout << "test: "<< event.get(h_mHH) << endl;
+    // cout << "Line: " << __LINE__ << endl;
 
+    if(is_signal){
+      const auto & HHgen = event.get(h_HHgenobjects);    
+      LorentzVector H_bb = HHgen.H_bb().v4();
+      // cout << "gen level mH_bb: " << H_bb.M() << endl;
+      const auto & HHgenreco = event.get(h_HHgenreco);
+      Jet B1 = HHgenreco.B1_jet();
+    }
+
+    mHH_reco->process(event);
+    chi2_module->process(event);
 
     bool pass_common = common->process(event);
     if(!pass_common) return false;
@@ -204,24 +313,38 @@ namespace uhh2examples {
 
     double eventweight_lumi = event.weight;
     event.set(h_eventweight_lumi, eventweight_lumi);
+    
     /*
     SF_eleReco->process(event);
     SF_eleID->process(event);
+    */
     SF_muonID->process(event);
     SF_muonIso->process(event);
-    */
+    
     fill_histograms(event,"Cleaner");
 
     TString leptonregion = "muon"; // later also add electron region
 
 
     if(!(muon_trigger_sel1->passes(event) || muon_trigger_sel2->passes(event))) return false;
+    // SF_muonTrigger->process(event);
     fill_histograms(event,"Trigger");
 
-    if(!nbtag_medium_sel->passes(event)) return false;
+
+
+    //SF_btag->process(event); //comment out when re-doing SF_btag
+    h_btageff->fill(event);
+
+    if(!nbtag_medium_sel->passes(event)) return false; // comment out when re-doing SF_btag
     fill_histograms(event,"BTag");
+    
+
+    // cout << "is mass reconstructed? " << event.get(h_is_mHH_reconstructed) << endl;
+    // cout << "mH_bb: " << event.get(h_mH_bb) << endl;
+    // cout << "Chi2_H_bb: " << event.get(h_chi2_H_bb) << endl;
 
     bool is_mHH_reconstructed = event.get(h_is_mHH_reconstructed);
+    // cout << "is_mHH_reconstructed: " << is_mHH_reconstructed << endl;
     if(is_mHH_reconstructed) fill_histograms(event, "Finalselection_mHH_reconstructed");
 
     event.set(h_eventweight_final, event.weight);

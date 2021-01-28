@@ -1,6 +1,6 @@
 #pragma once
 
-#include "UHH2/core/include/PreselectionHists.h"
+#include "UHH2/core/include/Hists.h"
 
 namespace uhh2examples {
 

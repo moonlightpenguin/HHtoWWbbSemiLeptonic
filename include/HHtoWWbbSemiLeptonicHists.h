@@ -1,6 +1,9 @@
 #pragma once
 
 #include "UHH2/core/include/Hists.h"
+#include "UHH2/core/include/Event.h"
+#include "UHH2/HHtoWWbbSemiLeptonic/include/HHReconstructionHypothesisDiscriminators.h"
+#include "UHH2/HHtoWWbbSemiLeptonic/include/HHReconstructionHypothesis.h"
 
 namespace uhh2examples {
 
@@ -43,11 +46,22 @@ namespace uhh2examples {
     TH2F *N_jets_vs_STjets;
 
     // M_HH
-    TH1F *MT_HH, *MT_HH_rebin, *MT_HH_test, *MT_HH_Vergleich;
+    TH1F *MHH, *CHI2;
+    TH1F *MH_bb, *CHI2_H_bb;
 
     // stuff
     TH1F *sum_event_weights;
     TH1F *N_pv;
+
+
+    // for reconstructed HH Mass
+    bool is_mc;
+
+    uhh2::Event::Handle<bool> h_is_mHH_reconstructed;
+    uhh2::Event::Handle<float> h_mHH, h_chi2;
+    uhh2::Event::Handle<float> h_mH_bb, h_chi2_H_bb;
+    uhh2::Event::Handle<float> h_mH_WW, h_chi2_H_WW;
+    uhh2::Event::Handle<float> h_mH_mean;
 
   };
 

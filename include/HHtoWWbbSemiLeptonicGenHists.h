@@ -1,6 +1,7 @@
 #pragma once
 
 #include "UHH2/core/include/Hists.h"
+#include "UHH2/HHtoWWbbSemiLeptonic/include/HHGenObjects.h"
 
 namespace uhh2examples {
 
@@ -17,15 +18,13 @@ public:
     HHtoWWbbSemiLeptonicGenHists(uhh2::Context & ctx, const std::string & dirname);
 
     virtual void fill(const uhh2::Event & ev) override;
-    virtual bool isQuark(int id);
-    virtual bool isLepton(int id);
-    virtual bool isChargedLepton(int id);
-    virtual bool isNeutrino(int id);
-
     virtual ~HHtoWWbbSemiLeptonicGenHists();
 
  protected:
-    TH2F* pt_W1_vs_pt_W2, *M_W1_vs_M_W2, *deltaR_WW_vs_pt_W1; //W
+
+    uhh2::Event::Handle<HHGenObjects> h_HHgenobjects;
+
+    TH2F* pt_WLep_vs_pt_WHad, *M_WLep_vs_M_WHad, *deltaR_WW_vs_pt_WLep; //W
     TH2F* pt_b1_vs_pt_b2, *M_b1_vs_M_b2, *deltaR_bb_vs_pt_b1; //b
     TH2F* pt_H_W_vs_pt_H_b, *M_H_W_vs_M_H_b, *deltaR_HH_vs_pt_H_W; //Higgs
     TH2F* pt_q1_vs_pt_q2, *eta_q1_vs_eta_q2; //quarks
