@@ -23,7 +23,11 @@
 #include "UHH2/HHtoWWbbSemiLeptonic/include/HHtoWWbbSemiLeptonicSelections.h"
 #include "UHH2/HHtoWWbbSemiLeptonic/include/HHtoWWbbSemiLeptonicPreselectionHists.h"
 #include "UHH2/HHtoWWbbSemiLeptonic/include/HHtoWWbbSemiLeptonicGenHists.h"
+#include "UHH2/HHtoWWbbSemiLeptonic/include/HHtoWWbbSemiLeptonicMatchedHists.h"
+
 #include "UHH2/HHtoWWbbSemiLeptonic/include/HHGenObjects.h"
+#include "UHH2/HHtoWWbbSemiLeptonic/include/HHGenRecoMatching.h"
+
 #include <UHH2/HHtoWWbbSemiLeptonic/include/ModuleBASE.h>
 
 
@@ -54,6 +58,8 @@ namespace uhh2examples {
     unique_ptr<uhh2::AnalysisModule> HHgenprod;
     uhh2::Event::Handle<HHGenObjects> h_HHgenobjects;
 
+    unique_ptr<uhh2::AnalysisModule> HHgenrecoprod;
+    uhh2::Event::Handle<HHGenRecoMatching> h_HHgenreco;
 
     ElectronId EleId;
     JetId Jet_ID;
@@ -73,19 +79,19 @@ namespace uhh2examples {
       cout << "booking histograms with tag " << tag << endl;
       string mytag = tag+"_General";
       book_HFolder(mytag, new HHtoWWbbSemiLeptonicPreselectionHists(ctx,mytag));
-      if(is_signal) {
-	mytag = tag+"_Signal"; 
-	book_HFolder(mytag, new HHtoWWbbSemiLeptonicGenHists(ctx,mytag));
-      }
+      mytag = tag+"_Signal"; 
+      book_HFolder(mytag, new HHtoWWbbSemiLeptonicGenHists(ctx,mytag));
+      mytag = tag+"_GenRecoMatched"; 
+      //book_HFolder(mytag, new HHtoWWbbSemiLeptonicMatchedHists(ctx,mytag));
       /*
-      mytag = tag+"_Muons";
-      book_HFolder(mytag, new MuonHists(ctx,mytag));
-      mytag = tag+"_Electrons";
-      book_HFolder(mytag, new ElectronHists(ctx,mytag));
-      mytag = tag+"_Jets";
-      book_HFolder(mytag, new JetHists(ctx,mytag));
-      mytag = tag+"_Event";
-      book_HFolder(mytag, new EventHists(ctx,mytag));
+	mytag = tag+"_Muons";
+	book_HFolder(mytag, new MuonHists(ctx,mytag));
+	mytag = tag+"_Electrons";
+	book_HFolder(mytag, new ElectronHists(ctx,mytag));
+	mytag = tag+"_Jets";
+	book_HFolder(mytag, new JetHists(ctx,mytag));
+	mytag = tag+"_Event";
+	book_HFolder(mytag, new EventHists(ctx,mytag));
       */
     }
   }
@@ -96,6 +102,8 @@ namespace uhh2examples {
     if(is_signal) {
       mytag = tag+"_Signal";
       HFolder(mytag)->fill(event);
+      mytag = tag+"_GenRecoMatched"; 
+      //HFolder(mytag)->fill(event);
     }
     /*
     mytag = tag+"_Muons";
@@ -130,6 +138,9 @@ HHtoWWbbSemiLeptonicPreselectionModule::HHtoWWbbSemiLeptonicPreselectionModule(C
     const string HHgen_label("HHgenobjects");
     HHgenprod.reset(new HHGenObjectsProducer(ctx, HHgen_label, true));
     h_HHgenobjects = ctx.get_handle<HHGenObjects>(HHgen_label);
+    const string HHgenreco_label("HHgenreco");
+    HHgenrecoprod.reset(new HHGenRecoProducer(ctx, HHgenreco_label, true));
+    h_HHgenreco = ctx.get_handle<HHGenRecoMatching>(HHgenreco_label);
 
 
     is_mc = ctx.get("dataset_type") == "MC";
@@ -148,8 +159,8 @@ HHtoWWbbSemiLeptonicPreselectionModule::HHtoWWbbSemiLeptonicPreselectionModule(C
     //cout << "Year: " << year << endl;
     JetId jet_pfid = JetPFID(JetPFID::WP_TIGHT_CHS);
     EleId = AndId<Electron>(ElectronID_Fall17_tight, PtEtaCut(24.0, 2.4));
-    if (year == Year::is2016v2) MuId = AndId<Muon>(MuonID(Muon::Tight), PtEtaCut(24.0, 2.4), MuonIso(0.15));
-    else                        MuId = AndId<Muon>(MuonID(Muon::CutBasedIdTight), PtEtaCut(24.0, 2.4), MuonID(Muon::PFIsoTight));
+    if (year == Year::is2016v2) MuId = AndId<Muon>(MuonID(Muon::Tight), PtEtaCut(25.0, 2.4), MuonIso(0.15));
+    else                        MuId = AndId<Muon>(MuonID(Muon::CutBasedIdTight), PtEtaCut(25.0, 2.4), MuonID(Muon::PFIsoTight));
     Jet_ID = AndId<Jet>(jet_pfid, PtEtaCut(30.0, 2.4));
 
 
@@ -199,9 +210,7 @@ HHtoWWbbSemiLeptonicPreselectionModule::HHtoWWbbSemiLeptonicPreselectionModule(C
     
     if(is_signal){
       HHgenprod->process(event);
-      const auto & HHgen = event.get(h_HHgenobjects);    
-      LorentzVector H_bb = HHgen.H_bb().v4();
-      cout << "gen level mH_bb: " << H_bb.M() << endl;
+      //HHgenrecoprod->process(event);
     }
 
 

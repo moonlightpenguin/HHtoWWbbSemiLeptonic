@@ -5,19 +5,23 @@
 
 namespace uhh2examples {
 
-class HHtoWWbbSemiLeptonicMatchedHists: public uhh2::Hists {
-public:
+  class HHtoWWbbSemiLeptonicMatchedHists: public uhh2::Hists {
+  public:
     // use the same constructor arguments as Hists for forwarding:
     HHtoWWbbSemiLeptonicMatchedHists(uhh2::Context & ctx, const std::string & dirname);
 
     virtual void fill(const uhh2::Event & ev) override;
     virtual ~HHtoWWbbSemiLeptonicMatchedHists();
 
- protected:
+  protected:
+    double TransverseMass(LorentzVector A, LorentzVector B, double mA, double mB);
 
     uhh2::Event::Handle<HHGenRecoMatching> h_HHgenreco;
     
     TH2F* pt_b1_vs_pt_b2, *M_b1_vs_M_b2, *deltaR_bb_vs_pt_b1; //b
-};
+
+    TH2F* pt_WLep_vs_pt_WHad, *M_WLep_vs_M_WHad; //W
+  };
+
 
 }

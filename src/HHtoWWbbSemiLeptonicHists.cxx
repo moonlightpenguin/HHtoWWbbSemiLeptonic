@@ -15,13 +15,14 @@ using namespace uhh2examples;
 HHtoWWbbSemiLeptonicHists::HHtoWWbbSemiLeptonicHists(Context & ctx, const string & dirname): Hists(ctx, dirname){
   // book all histograms here
   // jets
+
   N_jets = book<TH1F>("N_jets", "N_{jets}", 16, -0.5, 15.5);  
   N_PU = book<TH1F>("N_PU", "N_{PU}", 100, 0, 100);  
-  pt_jets = book<TH1F>("pt_jets", "p_{T}^{jets}", 100, 10, 250);
-  pt_jet1 = book<TH1F>("pt_jet1", "p_{T}^{jet 1}", 100, 10, 250);
-  pt_jet2 = book<TH1F>("pt_jet2", "p_{T}^{jet 2}", 100, 10, 250);
-  pt_jet3 = book<TH1F>("pt_jet3", "p_{T}^{jet 3}", 100, 10, 250);
-  pt_jet4 = book<TH1F>("pt_jet4", "p_{T}^{jet 4}", 100, 10, 250);
+  pt_jets = book<TH1F>("pt_jets", "p_{T}^{jets}", 40, 10, 250);
+  pt_jet1 = book<TH1F>("pt_jet1", "p_{T}^{jet 1}", 40, 10, 250);
+  pt_jet2 = book<TH1F>("pt_jet2", "p_{T}^{jet 2}", 40, 10, 250);
+  pt_jet3 = book<TH1F>("pt_jet3", "p_{T}^{jet 3}", 40, 10, 250);
+  pt_jet4 = book<TH1F>("pt_jet4", "p_{T}^{jet 4}", 40, 10, 250);
   eta_jets = book<TH1F>("eta_jets", "#eta^{jets}", 40, -2.5, 2.5);
   eta_jets_rebin = book<TH1F>("eta_jets_rebin", "#eta^{jets}", 60, -5.0, 5.0);
   eta_jet1 = book<TH1F>("eta_jet1", "#eta^{jet 1}", 40, -2.5, 2.5);
@@ -72,12 +73,9 @@ HHtoWWbbSemiLeptonicHists::HHtoWWbbSemiLeptonicHists(Context & ctx, const string
   // MET, ST
   MET = book<TH1F>("MET", "missing E_{T} [GeV]", 50, 0, 1500);
   MET_rebin = book<TH1F>("MET_rebin", "missing E_{T} [GeV]", 50, 0, 800);
-  ST = book<TH1F>("ST", "S_{T} [GeV]", 50, 0, 5000);
-  ST_rebin = book<TH1F>("ST_rebin", "S_{T} [GeV]", 200, 0, 3000);
-  STjets = book<TH1F>("STjets", "S_{T}^{jets} [GeV]", 50, 0, 5000);
-  STjets_rebin = book<TH1F>("STjets_rebin", "S_{T}^{jets} [GeV]", 200, 0, 3000);
-  STlep = book<TH1F>("STlep", "S_{T}^{lep} [GeV]", 50, 0, 7000);
-  STlep_rebin = book<TH1F>("STlep_rebin", "S_{T}^{lep} [GeV]", 50, 0, 1500);
+  ST = book<TH1F>("ST", "S_{T} [GeV]", 50, 0, 3000);
+  STjets = book<TH1F>("STjets", "S_{T}^{jets} [GeV]", 50, 0, 3000);
+  STlep = book<TH1F>("STlep", "S_{T}^{lep} [GeV]", 50, 0, 1500);
  
   N_jets_vs_STjets = book<TH2F>("N_jets_vs_STjets", "N_{jets} vs S_{T}^{jets}", 21, -0.5, 20.5, 100, 0, 5000);
 
@@ -86,9 +84,13 @@ HHtoWWbbSemiLeptonicHists::HHtoWWbbSemiLeptonicHists(Context & ctx, const string
   MHH = book<TH1F>("MHH", "M^{HH} [GeV]", 50, 0, 500);
   CHI2 = book<TH1F>("CHI2", "#chi^{2}", 100, 0, 500);
 
-  MH_bb = book<TH1F>("MH_bb", "M_{H}^{bb} [GeV]", 50, 0, 500);
+
+  MH_bb_simple = book<TH1F>("MH_bb_simple", "M_{bb}^{highest-pt} [GeV]", 100, 0, 500);
+  MH_bb = book<TH1F>("MH_bb", "M_{bb}^{#chi2} [GeV]", 100, 0, 500);
   CHI2_H_bb = book<TH1F>("CHI2_H_bb", "#chi_{H->bb}^{2}", 100, 0, 500);
 
+  MH_bb_simple_rebin = book<TH1F>("MH_bb_simple_rebin", "M_{bb}^{highest-pt} [GeV]", 40, 0, 200);
+  MH_bb_rebin = book<TH1F>("MH_bb_rebin", "M_{bb}^{#chi2} [GeV]", 40, 0, 200);
 
   sum_event_weights = book<TH1F>("sum_event_weights", "BinContent = sum(eventweights)", 1, 0.5, 1.5);
 
@@ -172,6 +174,7 @@ void HHtoWWbbSemiLeptonicHists::fill(const Event & event){
   //vector<Jet>* bjets;
   Jet b1;
   Jet b2;
+  LorentzVector H_bb;
 
   for (unsigned int i =0; i<jets->size(); i++) {
     if(Btag_loose(jets->at(i),event))  Nbjets_loose++;
@@ -181,8 +184,8 @@ void HHtoWWbbSemiLeptonicHists::fill(const Event & event){
     if(DeepjetMedium(jets->at(i),event)) {
       //bjets->push_back(jets->at(i));
       Ndeepjet_med++;
-      if(Ndeepjet_med == 1) b1 =jets->at(i);
-      if(Ndeepjet_med == 2) b2 =jets->at(i);
+      if(Ndeepjet_med == 1) {b1 =jets->at(i); H_bb+=jets->at(i).v4();}
+      if(Ndeepjet_med == 2) {b2 =jets->at(i); H_bb+=jets->at(i).v4();}
     }
     if(DeepjetTight(jets->at(i),event))  Ndeepjet_tight++;
 
@@ -246,14 +249,14 @@ void HHtoWWbbSemiLeptonicHists::fill(const Event & event){
   MET_rebin->Fill(met, weight);
 
   ST->Fill(st, weight);
-  ST_rebin->Fill(st, weight);
 
   STjets->Fill(st_jets, weight);
-  STjets_rebin->Fill(st_jets, weight);
   N_jets_vs_STjets->Fill(Njets, st_jets, weight);
 
   STlep->Fill(st_lep, weight);
-  STlep_rebin->Fill(st_lep, weight);
+
+  MH_bb_simple->Fill(H_bb.M(), weight);
+  MH_bb_simple_rebin->Fill(H_bb.M(), weight);
 
 
   // reconstructed mass
@@ -278,7 +281,7 @@ void HHtoWWbbSemiLeptonicHists::fill(const Event & event){
    
     CHI2_H_bb->Fill(chi2_H_bb, weight);
     MH_bb->Fill(mH_bb, weight); 
-    
+    MH_bb_rebin->Fill(mH_bb, weight); 
 
   }
 

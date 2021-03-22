@@ -185,8 +185,8 @@
 			<OutputTree Name="AnalysisTree" />
 		</InputData>
 
--->
 
+-->
 
 <!--
 
@@ -291,8 +291,9 @@
 
 <!-- SIGNAL (check lumi with Matthias) -->
 
+<!-- Lumi="9661706.924" before HHtoWWbbSemiLeptonic BR -->
 
-		<InputData Lumi="9661706.924" NEventsMax="&NEVT;" Type="MC" Version="HHtoWWbbSemiLeptonic_SM_2016v3" Cacheable="&b_Cacheable;">
+		<InputData Lumi="87304580.64" NEventsMax="&NEVT;" Type="MC" Version="HHtoWWbbSemiLeptonic_SM_2016v3" Cacheable="&b_Cacheable;">
 			<In FileName="&HHtoWWbbSemiLeptonic_SM;" Lumi="0.0"/>
 			<InputTree Name="AnalysisTree" />
 			<OutputTree Name="AnalysisTree" />
@@ -548,7 +549,7 @@
 			<OutputTree Name="AnalysisTree" />
 		</InputData>
 
-
+<!--
 
 		<InputData Lumi="1.084219166" NEventsMax="&NEVT;" Type="MC" Version="QCD_Mu_Pt-15to20_2016v3" Cacheable="&b_Cacheable;">
 			<In FileName="&QCD_Mu_Pt-15to20;" Lumi="0.0"/>
@@ -561,7 +562,7 @@
 			<InputTree Name="AnalysisTree" />
 			<OutputTree Name="AnalysisTree" />
 		</InputData>
-
+-->
 		<InputData Lumi="18.03933848" NEventsMax="&NEVT;" Type="MC" Version="QCD_Mu_Pt-30to50_2016v3" Cacheable="&b_Cacheable;">
 			<In FileName="&QCD_Mu_Pt-30to50;" Lumi="0.0"/>
 			<InputTree Name="AnalysisTree" />

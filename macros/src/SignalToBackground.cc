@@ -60,13 +60,69 @@ void AnalysisTool::SignalToBackground(TString cuts, TString plotname) {
   int min = h_signal->GetBinLowEdge(1);
   int max = h_signal->GetBinLowEdge(n_bins+2);
   cout << "total number of bins: " << n_bins << endl;
+
+  // cosmetics
   TCanvas* c1 = new TCanvas("c1", "c1", 600, 600);
   TH1F* h_out1 = new TH1F("h_out", "S/#sqrt{B}", n_bins, min, max);
-  h_out1->SetXTitle("p_{T,min}^{Jet}");
-  h_out1->SetAxisRange(10., 100.);
   TH1F* h_out2 = new TH1F("h_out", "S/B", n_bins, min, max);
-  h_out2->SetXTitle("p_{T}^{Jets}");
+  h_out1->SetAxisRange(10., 100.);
   h_out2->SetAxisRange(10., 100.);
+
+  h_out1->SetYTitle("S/#sqrt{B}");
+  h_out2->SetYTitle("S/B");
+
+  if(plotname.Contains("pt_jet")) {
+  h_out1->SetXTitle("p_{T,min}^{Jets}");
+  h_out2->SetXTitle("p_{T,min}^{Jets}");
+  }
+  else if(plotname.Contains("pt_mu")) {
+  h_out1->SetXTitle("p_{T,min}^{#mu}");
+  h_out2->SetXTitle("p_{T,min}^{#mu}");
+  }
+
+  h_out1->SetTitle("");
+  h_out2->SetTitle("");
+  h_out1->SetStats(0);
+  h_out2->SetStats(0);
+
+  // CMS Text
+
+  bool right = true; // CMS text on the right side
+  TLatex *text2 = new TLatex(3.5, 24, "CMS");
+  text2->SetNDC();
+  text2->SetTextAlign(13);
+  text2->SetX(0.24);
+  if(right) text2->SetX(0.7);
+  text2->SetTextFont(62);
+  text2->SetTextSize(0.05);
+  //text2->SetY(0.87);
+  text2->SetY(0.92);
+  text2->Draw();
+
+  TLatex *text3 = new TLatex(3.5, 24, "Work in progress");
+  text3->SetNDC();
+  text3->SetTextAlign(13);
+  text3->SetX(0.24);
+  if(right) text3->SetX(0.7);
+  text3->SetTextFont(52);
+  text3->SetTextSize(0.035);
+  //text3->SetY(0.78);
+  text3->SetY(0.83);
+  text3->Draw();
+
+  // Simulation:
+  TLatex *text4 = new TLatex(3.5, 24, "Simulation");
+  text4->SetNDC();
+  text4->SetTextAlign(13);
+  text4->SetX(0.24);
+  if(right) text4->SetX(0.7);
+  text4->SetTextFont(52);
+  text4->SetTextSize(0.035);
+  //text4->SetY(0.82);
+  text4->SetY(0.87);
+  text4->Draw();
+
+
 
   // loop over all bins;
   for(int i=1; i<n_bins+1; i++) {
@@ -83,6 +139,8 @@ void AnalysisTool::SignalToBackground(TString cuts, TString plotname) {
     h_out1->SetBinContent(i, S/sqrt(B));
     h_out2->SetBinContent(i, S/B);
   }
+  c1->SetLeftMargin(0.16);
+  c1->cd();
   h_out1->Draw("HIST");
   c1->SaveAs(uhh2_path + "HHtoWWbbSemiLeptonic/macros/Plots/sigToSqrtBackgr_" + year + "_" + cuts + ".eps");
   c1->Clear();

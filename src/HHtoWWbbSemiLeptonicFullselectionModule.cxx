@@ -64,7 +64,7 @@ namespace uhh2examples {
 
     unique_ptr<Hists> h_btageff;
     std::unique_ptr<AnalysisModule> SF_muonIso, SF_muonID, SF_muonTrigger, SF_btag;
-    std::unique_ptr<Selection> nbtag_medium_sel, muon_trigger_sel1, muon_trigger_sel2;
+    std::unique_ptr<Selection> nbtag1_medium_sel, nbtag2_medium_sel, muon_trigger_sel1, muon_trigger_sel2;
     
 
     unique_ptr<HHtoWWbbMassReconstruction> mHH_reco;
@@ -116,13 +116,11 @@ namespace uhh2examples {
       cout << "booking histograms with tag " << tag << endl;
       string mytag = tag+"_General";
       book_HFolder(mytag, new HHtoWWbbSemiLeptonicHists(ctx,mytag));
-      if(is_signal){
-	mytag = tag+"_Signal"; 
-	book_HFolder(mytag, new HHtoWWbbSemiLeptonicGenHists(ctx,mytag));
-	mytag = tag+"_GenRecoMatched"; 
-	book_HFolder(mytag, new HHtoWWbbSemiLeptonicMatchedHists(ctx,mytag));
-      }
-/*
+      mytag = tag+"_Signal"; 
+      book_HFolder(mytag, new HHtoWWbbSemiLeptonicGenHists(ctx,mytag));
+      mytag = tag+"_GenRecoMatched"; 
+      book_HFolder(mytag, new HHtoWWbbSemiLeptonicMatchedHists(ctx,mytag));
+      /*
       mytag = tag+"_Muons";
       book_HFolder(mytag, new MuonHists(ctx,mytag));
       mytag = tag+"_Electrons";
@@ -263,7 +261,8 @@ namespace uhh2examples {
     common->init(ctx, Sys_PU);
 
     // Selections
-    nbtag_medium_sel.reset(new NJetSelection(2, -1, DeepjetMedium));
+    nbtag1_medium_sel.reset(new NJetSelection(1, -1, DeepjetMedium));
+    nbtag2_medium_sel.reset(new NJetSelection(2, -1, DeepjetMedium));
 
 
 
@@ -279,9 +278,10 @@ namespace uhh2examples {
     // cout << "Fullselection: process" << endl;
     //cout << "Line: " << __LINE__ << endl;
 
+    if (is_signal){
     HHgenprod->process(event);
     HHgenrecoprod->process(event);
-
+    }
     event.set(h_is_mHH_reconstructed, false);
     event.set(h_mHH, -1);
     event.set(h_chi2, -1);
@@ -295,14 +295,6 @@ namespace uhh2examples {
 
     //cout << "test: "<< event.get(h_mHH) << endl;
     // cout << "Line: " << __LINE__ << endl;
-
-    if(is_signal){
-      const auto & HHgen = event.get(h_HHgenobjects);    
-      LorentzVector H_bb = HHgen.H_bb().v4();
-      // cout << "gen level mH_bb: " << H_bb.M() << endl;
-      const auto & HHgenreco = event.get(h_HHgenreco);
-      Jet B1 = HHgenreco.B1_jet();
-    }
 
     mHH_reco->process(event);
     chi2_module->process(event);
@@ -335,9 +327,9 @@ namespace uhh2examples {
     //SF_btag->process(event); //comment out when re-doing SF_btag
     h_btageff->fill(event);
 
-    if(!nbtag_medium_sel->passes(event)) return false; // comment out when re-doing SF_btag
+    if(!nbtag1_medium_sel->passes(event)) return false; // comment out when re-doing SF_btag
     fill_histograms(event,"BTag");
-    
+    if(!nbtag2_medium_sel->passes(event)) return false;
 
     // cout << "is mass reconstructed? " << event.get(h_is_mHH_reconstructed) << endl;
     // cout << "mH_bb: " << event.get(h_mH_bb) << endl;

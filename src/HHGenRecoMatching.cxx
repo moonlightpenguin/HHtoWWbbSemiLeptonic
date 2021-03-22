@@ -6,74 +6,91 @@ using namespace std;
 
 
 
-HHGenRecoMatching::HHGenRecoMatching(const vector<Jet> & jets, const HHGenObjects & HHgen, bool throw_on_failure) {
+HHGenRecoMatching::HHGenRecoMatching(const vector<Jet> & jets, const LorentzVector & lepton, const LorentzVector & met, const HHGenObjects & HHgen, bool throw_on_failure) {
   //cout << "HHGenRecoMatching: start" << endl;
     
   B1_gen = HHgen.B1();
   B2_gen = HHgen.B2();
   Q1_gen = HHgen.Q1();
   Q2_gen = HHgen.Q2();
+  L_gen = HHgen.ChargedLepton().v4();
+  N_gen = HHgen.Neutrino().v4();
 
-  b1 = JetMatching(jets, B1_gen);
-  b2 = JetMatching(jets, B2_gen);
+  b1_match = JetMatching(jets, B1_gen);
+  b2_match = JetMatching(jets, B2_gen);
+  q1_match = JetMatching(jets, Q1_gen);
+  q2_match = JetMatching(jets, Q2_gen);
+
+
+
+  l_match = LeptonMatching(lepton, L_gen);
+  n_match = LeptonMatching(met, N_gen);
 
 }
 
-// what happens when there is no jet inside dR_max ? -> pt=0
-Jet HHGenRecoMatching::JetMatching(const vector<Jet> & jets, GenParticle gp) const{
-  //cout << "JetMatching: start" << endl;
+
+HHMatchedJets HHGenRecoMatching::JetMatching(const vector<Jet> & jets, const GenParticle gp) const{
+  HHMatchedJets output;
   double dR_max = 0.4;
   double dR_min = 999;
   Jet matchedJet;
+  vector<Jet> matchedJets;
+  output.matched = false;
   for(unsigned int i=0; i<jets.size(); i++) {
     double dR = deltaR(jets[i], gp);
-    if((dR < dR_max) && (dR < dR_min)) {
-      matchedJet = jets[i];
-      dR_min = dR;
+    if(dR < dR_max) {
+      matchedJets.push_back(jets[i]);
+      if(dR < dR_min) {
+	matchedJet = jets[i];
+	dR_min = dR;
+      }
+      output.matched = true;
     }
   }
-  cout << "pt matched Jet: " << matchedJet.pt() << endl;
-  return matchedJet;
+  output.mainJet = matchedJet;
+  output.allJets = matchedJets;
+  output.dR_JetGen = dR_min;
+  output.gen = gp.v4();
+
+  return output;
 }
 
-
-Jet HHGenRecoMatching::B1_jet() const{
-  return b1;
-}
-Jet HHGenRecoMatching::B2_jet() const{
-  return b2;
-}
-Jet HHGenRecoMatching::Q1_jet() const{
-  return q1;
-}
-Jet HHGenRecoMatching::Q2_jet() const{
-  return q2;
-}
-
-
-
-
-/*
-vector<Jet> HHGenRecoMatching::JetMatching(const GenParticle gp) {
+HHMatchedLepton HHGenRecoMatching::LeptonMatching(const LorentzVector & lepton, LorentzVector gp) const{
+  HHMatchedLepton output;
   double dR_max = 0.4;
-  double dR_min = 999;
-  vector<Jet> matchedJets;
-  for(unsigned int i=0; i<recoJets.size(); i++) {
-    double dR = deltaR(recoJets[i], gp);
-      if(dR < dR_max) {
-	matchedJets.push_back(recoJets[i]);
-      }
-  }
-  // sort by dR
-  return matchedJets;
+  output.matched = false;
+  double dR = deltaR(lepton,gp);
+  if(dR < dR_max) output.matched = true;
+  output.lepton = lepton;
+  output.gen = gp;
+  output.dR_LepGen = dR;
+  return output;
 }
 
 
-vector<Jet> HHGenRecoMatching::B1_jets() const {
-  return JetMatching(B1_gen);
+HHMatchedJets HHGenRecoMatching::B1_jets() const{
+  return b1_match;
+}
+HHMatchedJets HHGenRecoMatching::B2_jets() const{
+  return b2_match;
+}
+HHMatchedJets HHGenRecoMatching::Q1_jets() const{
+  return q1_match;
+}
+HHMatchedJets HHGenRecoMatching::Q2_jets() const{
+  return q2_match;
+}
+HHMatchedLepton HHGenRecoMatching::Lepton() const{
+  return l_match;
+}
+HHMatchedLepton HHGenRecoMatching::Neutrino() const{
+  return n_match;
 }
 
-*/
+
+
+
+
 
 
 
@@ -87,7 +104,11 @@ HHGenRecoProducer::HHGenRecoProducer(uhh2::Context & ctx, const std::string & na
 
 bool HHGenRecoProducer::process(Event & event) {
   const HHGenObjects & HHgen = event.get(h_HHgenobjects);
+  
+  const LorentzVector & lepton = event.muons->at(0).v4();
+  // if(ele_region) lepton = event.electrons->at(0).v4();
+  const LorentzVector & met = event.met->v4();
 
-  event.set(h_HHgenrecomatching, HHGenRecoMatching(*event.jets, HHgen, throw_on_failure));
+  event.set(h_HHgenrecomatching, HHGenRecoMatching(*event.jets, lepton, met, HHgen, throw_on_failure));
   return true;
 }

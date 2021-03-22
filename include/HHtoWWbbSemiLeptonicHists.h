@@ -24,6 +24,8 @@ namespace uhh2examples {
 
   protected:
 
+    
+
     // Jets
     TH1F *N_jets, *N_PU, *pt_jets, *pt_jet1, *pt_jet2, *pt_jet3, *pt_jet4, *eta_jets, *eta_jets_rebin, *eta_jet1, *eta_jet2, *eta_jet3, *eta_jet4;
     TH2F *N_jet_vs_pt_jet, *N_jet_vs_eta_jet;
@@ -42,12 +44,13 @@ namespace uhh2examples {
     TH1F *MET, *MET_rebin, *MET_rebin2;
 
     // ST
-    TH1F *ST, *ST_rebin, *STjets, *STjets_rebin, *STlep, *STlep_rebin;
+    TH1F *ST, *STjets, *STlep;
     TH2F *N_jets_vs_STjets;
 
     // M_HH
     TH1F *MHH, *CHI2;
-    TH1F *MH_bb, *CHI2_H_bb;
+    TH1F *MH_bb, *CHI2_H_bb, *MH_bb_simple;
+    TH1F *MH_bb_rebin, *MH_bb_simple_rebin;
 
     // stuff
     TH1F *sum_event_weights;
@@ -64,5 +67,4 @@ namespace uhh2examples {
     uhh2::Event::Handle<float> h_mH_mean;
 
   };
-
 }

@@ -31,6 +31,7 @@ private:
 
   TString signal_tag;
   vector<TString> backgrounds_tag;
+  vector<TString> main_backgrounds_tag;
 
   map<const TString, Color_t> proc_colors;
 

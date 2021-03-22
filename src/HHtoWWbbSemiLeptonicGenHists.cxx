@@ -30,16 +30,16 @@ HHtoWWbbSemiLeptonicGenHists::HHtoWWbbSemiLeptonicGenHists(Context & ctx, const 
 
 
 
-  book<TH1F>("M_HH", "M^{HH} [GeV]", 50, 200, 800);
-  book<TH1F>("M_H_W", "M^{Higgs} [GeV] decaying to W", 50, 124.95, 125.05);
-  book<TH1F>("M_H_W_reco", "M^{Higgs} [GeV] decaying to W (reco)", 50, 124.95, 125.05);
-  book<TH1F>("M_H_b", "M^{Higgs} [GeV] decaying to b", 50, 124.95, 125.05);
-  book<TH1F>("M_H_b_reco", "M^{Higgs} [GeV] decaying to b (reco)", 50, 124.95, 125.05);
+  book<TH1F>("M_HH", "M_{HH} [GeV]", 50, 200, 800);
+  book<TH1F>("M_H_W", "M_{Higgs} [GeV] decaying to W", 50, 124.95, 125.05);
+  book<TH1F>("M_H_W_reco", "M_{Higgs} [GeV] decaying to W (reco)", 50, 124.95, 125.05);
+  book<TH1F>("M_H_b", "M_{Higgs} [GeV] decaying to b", 50, 124.95, 125.05);
+  book<TH1F>("M_H_b_reco", "M_{Higgs} [GeV] decaying to b (reco)", 50, 124.95, 125.05);
 
 
   pt_H_W_vs_pt_H_b = book<TH2F>("pt_H_W vs pt_H_b", "p_{T}^{H_W} [GeV] vs p_{T}^{H_b} [GeV]", 50, 0, 500, 50, 0, 500);
-  M_H_W_vs_M_H_b = book<TH2F>("M_H_W vs M_H_b", "M^{H_W} [GeV] vs M^{H_b} [GeV]", 50, 124.8, 125.2, 50, 124.8, 125.2);
-  deltaR_HH_vs_pt_H_W = book<TH2F>("deltaR_HH vs pt_H_W", "#Delta R^{HH} vs p_{T}^{H_W} [GeV]", 50, 0, 5, 50, 0, 500);
+  M_H_W_vs_M_H_b = book<TH2F>("M_H_W vs M_H_b", "M_{H_W} [GeV] vs M_{H_b} [GeV]", 50, 124.8, 125.2, 50, 124.8, 125.2);
+  deltaR_HH_vs_pt_H_W = book<TH2F>("deltaR_HH vs pt_H_W", "#Delta R_{HH} vs p_{T}^{H_W} [GeV]", 50, 0, 5, 50, 0, 500);
 
   // W's
   book<TH1F>("pt_WLep", "p_{T}^{WLep} [GeV]", 50, 0, 500);
@@ -52,12 +52,12 @@ HHtoWWbbSemiLeptonicGenHists::HHtoWWbbSemiLeptonicGenHists(Context & ctx, const 
 
 
 
-  book<TH1F>("M_WLep", "M^{WLep} [GeV]", 80, 0, 100);
-  book<TH1F>("M_WHad", "M^{WHad} [GeV]", 80, 0, 100);
+  book<TH1F>("M_WLep", "M_{WLep} [GeV]", 80, 0, 100);
+  book<TH1F>("M_WHad", "M_{WHad} [GeV]", 80, 0, 100);
 
-  pt_WLep_vs_pt_WHad = book<TH2F>("pt_WLep vs pt_WHad", "p_{T}^{W1} [GeV] vs p_{T}^{W2} [GeV]", 50, 0, 500, 50, 0, 500);
-  M_WLep_vs_M_WHad = book<TH2F>("M_WLep vs M_WHad", "M^{WLep} [GeV] vs M^{WHad} [GeV]", 80, 0, 100, 80, 0, 100);
-  deltaR_WW_vs_pt_WLep = book<TH2F>("deltaR_WW vs pt_WLep", "#Delta R^{WW} vs p_{T}^{WLep} [GeV]", 50, 0, 5, 50, 0, 500);
+  pt_WLep_vs_pt_WHad = book<TH2F>("pt_WLep vs pt_WHad", "p_{T}_{WLep} [GeV] vs p_{T}_{WHad} [GeV]", 50, 0, 500, 50, 0, 500);
+  M_WLep_vs_M_WHad = book<TH2F>("M_WLep vs M_WHad", "M_{WLep} [GeV] vs M_{WHad} [GeV]", 80, 0, 100, 80, 0, 100);
+  deltaR_WW_vs_pt_WLep = book<TH2F>("deltaR_WW vs pt_WLep", "#Delta R_{WW} vs p_{T}^{WLep} [GeV]", 50, 0, 5, 50, 0, 500);
 
 
   // W daughters

@@ -78,6 +78,7 @@ void AnalysisTool::Efficiencies(TString selection, TString cuts, vector<TString>
     h_out->SetLineColor(proc_colors[proc]);
     h_out->Draw("SAME");
     leg->AddEntry(h_out, processes[i],"L");
+
   }
   leg->Draw();
   c1->SaveAs("/nfs/dust/cms/user/frahmmat/CMSSW_10_2_X_v2/CMSSW_10_2_17/src/UHH2/HHtoWWbbSemiLeptonic/macros/Plots/efficiencies_" + year + "_" + selection + "_" + cuts + ".eps");

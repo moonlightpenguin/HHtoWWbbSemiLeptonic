@@ -12,34 +12,55 @@
 using namespace uhh2;
 using namespace std;
 
+struct HHMatchedJets {
+  // just return LorentzVectors instead of jets? -> difference between classes?
+  bool matched;
+  Jet mainJet;
+  vector<Jet> allJets; // should be pt sorted
+  double dR_JetGen;
+  LorentzVector gen;
+  // LorentzVector gen;
+};
+
+struct HHMatchedLepton {
+  bool matched;
+  LorentzVector lepton;
+  LorentzVector gen;
+  double dR_LepGen;
+};
+
 class HHGenRecoMatching {
  public:
-  HHGenRecoMatching(const vector<Jet> & jets, const HHGenObjects & HHgen, bool throw_on_failure = true);
-  /*
-  vector<Jet> JetMatching(const GenParticle gp);
-  vector<Jet> B1_jets() const;
-  vector<Jet> B2_jets() const;
-  */
+  HHGenRecoMatching(const vector<Jet> & jets, const LorentzVector & lepton, const LorentzVector & met, const HHGenObjects & HHgen, bool throw_on_failure = true);
 
-  Jet JetMatching(const vector<Jet> & jets, GenParticle gp) const;
-  Jet B1_jet() const;
-  Jet B2_jet() const;
-  Jet Q1_jet() const;
-  Jet Q2_jet() const;
+  HHMatchedJets JetMatching(const vector<Jet> & jets, GenParticle gp) const;
+  HHMatchedLepton LeptonMatching(const LorentzVector & lepton, LorentzVector gp) const;
+
+
+  HHMatchedJets B1_jets() const;
+  HHMatchedJets B2_jets() const;
+  HHMatchedJets Q1_jets() const;
+  HHMatchedJets Q2_jets() const;
+  HHMatchedLepton Lepton() const;
+  HHMatchedLepton Neutrino() const;
+
 
  private:
-
   GenParticle B1_gen;
   GenParticle B2_gen;
   GenParticle Q1_gen;
   GenParticle Q2_gen;
+  LorentzVector L_gen;
+  LorentzVector N_gen;
 
-  Jet b1;
-  Jet b2;
-  Jet q1;
-  Jet q2;
-
+  HHMatchedJets b1_match;
+  HHMatchedJets b2_match;
+  HHMatchedJets q1_match;
+  HHMatchedJets q2_match;
+  HHMatchedLepton l_match;
+  HHMatchedLepton n_match;
 };
+
 
 
 class HHGenRecoProducer: public uhh2::AnalysisModule {

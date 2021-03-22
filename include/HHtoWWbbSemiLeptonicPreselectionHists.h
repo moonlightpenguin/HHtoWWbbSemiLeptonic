@@ -35,8 +35,8 @@ namespace uhh2examples {
     TH1F *N_bJets_loose, *N_bJets_med, *N_bJets_tight, *N_deepjet_loose, *N_deepjet_med, *N_deepjet_tight, *DeltaR_bjets;
 
     // leptons
-    TH1F *N_mu, *pt_mu, *eta_mu, *eta_mu_rebin, *reliso_mu;
-    TH1F *N_ele, *pt_ele, *eta_ele, *eta_ele_rebin, *reliso_ele;
+    TH1F *N_mu, *pt_mu, *pt_mu_rebin, *eta_mu, *eta_mu_rebin, *reliso_mu;
+    TH1F *N_ele, *pt_ele, *pt_ele_rebin, *eta_ele, *eta_ele_rebin, *reliso_ele;
     TH1F *N_lep;
 
     // MET

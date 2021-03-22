@@ -17,11 +17,11 @@ HHtoWWbbSemiLeptonicPreselectionHists::HHtoWWbbSemiLeptonicPreselectionHists(Con
   // jets
   N_jets = book<TH1F>("N_jets", "N_{jets}", 16, -0.5, 15.5);  
   N_PU = book<TH1F>("N_PU", "N_{PU}", 100, 0, 100);  
-  pt_jets = book<TH1F>("pt_jets", "p_{T}^{jets}", 100, 10, 250);
-  pt_jet1 = book<TH1F>("pt_jet1", "p_{T}^{jet 1}", 100, 10, 250);
-  pt_jet2 = book<TH1F>("pt_jet2", "p_{T}^{jet 2}", 100, 10, 250);
-  pt_jet3 = book<TH1F>("pt_jet3", "p_{T}^{jet 3}", 100, 10, 250);
-  pt_jet4 = book<TH1F>("pt_jet4", "p_{T}^{jet 4}", 100, 10, 250);
+  pt_jets = book<TH1F>("pt_jets", "p_{T}^{jets} [GeV]", 100, 10, 250);
+  pt_jet1 = book<TH1F>("pt_jet1", "p_{T}^{jet 1} [GeV]", 100, 10, 250);
+  pt_jet2 = book<TH1F>("pt_jet2", "p_{T}^{jet 2} [GeV]", 100, 10, 250);
+  pt_jet3 = book<TH1F>("pt_jet3", "p_{T}^{jet 3} [GeV]", 100, 10, 250);
+  pt_jet4 = book<TH1F>("pt_jet4", "p_{T}^{jet 4} [GeV]", 100, 10, 250);
   eta_jets = book<TH1F>("eta_jets", "#eta^{jets}", 40, -2.5, 2.5);
   eta_jets_rebin = book<TH1F>("eta_jets_rebin", "#eta^{jets}", 60, -5.0, 5.0);
   eta_jet1 = book<TH1F>("eta_jet1", "#eta^{jet 1}", 40, -2.5, 2.5);
@@ -63,13 +63,15 @@ HHtoWWbbSemiLeptonicPreselectionHists::HHtoWWbbSemiLeptonicPreselectionHists(Con
 
   // leptons
   N_mu = book<TH1F>("N_mu", "N^{#mu}", 11, -0.5, 10.5);
-  pt_mu = book<TH1F>("pt_mu", "p_{T}^{#mu} [GeV/c]", 40, 0, 200);
+  pt_mu = book<TH1F>("pt_mu", "p_{T}^{#mu} [GeV]", 40, 0, 200);
+  pt_mu_rebin = book<TH1F>("pt_mu_rebin", "p_{T}^{#mu} [GeV]", 40, 0, 100);
   eta_mu = book<TH1F>("eta_mu", "#eta^{#mu}", 40, -2.5, 2.5);
   eta_mu_rebin = book<TH1F>("eta_mu_rebin", "#eta^{#mu}", 60, -5.0, 5.0);
   reliso_mu = book<TH1F>("reliso_mu", "#mu rel. Iso", 40, 0, 0.5);
 
   N_ele = book<TH1F>("N_ele", "N^{e}", 11, -0.5, 10.5);
   pt_ele = book<TH1F>("pt_ele", "p_{T}^{e} [GeV]", 40, 0, 200);
+  pt_ele_rebin = book<TH1F>("pt_ele_rebin", "p_{T}^{e} [GeV]", 40, 0, 100);
   eta_ele = book<TH1F>("eta_ele", "#eta^{e}", 50, -2.5, 2.5);
   eta_ele_rebin = book<TH1F>("eta_ele_rebin", "#eta^{e}", 40, -5.0, 5.0);
   reliso_ele = book<TH1F>("reliso_ele", "e rel. Iso", 40, 0, 0.5);
@@ -217,7 +219,8 @@ void HHtoWWbbSemiLeptonicPreselectionHists::fill(const Event & event){
   int Nmuons = event.muons->size();
   N_mu->Fill(Nmuons, weight);
   for (const Muon & thismu : *event.muons){
-      pt_mu->Fill(thismu.pt(), weight);
+      pt_mu->Fill(thismu.pt(), weight);      
+      pt_mu_rebin->Fill(thismu.pt(), weight);
       eta_mu->Fill(thismu.eta(), weight);
       eta_mu_rebin->Fill(thismu.eta(), weight);
       reliso_mu->Fill(thismu.relIso(), weight);
@@ -230,6 +233,7 @@ void HHtoWWbbSemiLeptonicPreselectionHists::fill(const Event & event){
   N_ele->Fill(Nelectrons, weight);
   for (const Electron & thismu : *event.electrons){
       pt_ele->Fill(thismu.pt(), weight);
+      pt_ele_rebin->Fill(thismu.pt(), weight);
       eta_ele->Fill(thismu.eta(), weight);      
       eta_ele_rebin->Fill(thismu.eta(), weight);
       reliso_ele->Fill(thismu.relIso(), weight);
