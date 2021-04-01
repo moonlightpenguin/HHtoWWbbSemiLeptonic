@@ -36,6 +36,7 @@ HHMatchedJets HHGenRecoMatching::JetMatching(const vector<Jet> & jets, const Gen
   Jet matchedJet;
   vector<Jet> matchedJets;
   output.matched = false;
+  int jet_index=-1;
   for(unsigned int i=0; i<jets.size(); i++) {
     double dR = deltaR(jets[i], gp);
     if(dR < dR_max) {
@@ -43,6 +44,7 @@ HHMatchedJets HHGenRecoMatching::JetMatching(const vector<Jet> & jets, const Gen
       if(dR < dR_min) {
 	matchedJet = jets[i];
 	dR_min = dR;
+	jet_index = i+1; // oder nur i ?
       }
       output.matched = true;
     }
@@ -51,6 +53,7 @@ HHMatchedJets HHGenRecoMatching::JetMatching(const vector<Jet> & jets, const Gen
   output.allJets = matchedJets;
   output.dR_JetGen = dR_min;
   output.gen = gp.v4();
+  output.jet_index = jet_index;
 
   return output;
 }

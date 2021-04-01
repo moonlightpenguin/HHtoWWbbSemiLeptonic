@@ -2,6 +2,7 @@
 
 #include "UHH2/core/include/AnalysisModule.h"
 #include "UHH2/HHtoWWbbSemiLeptonic/include/HHReconstructionHypothesis.h"
+#include "UHH2/HHtoWWbbSemiLeptonic/include/Functions.h"
 #include "UHH2/core/include/Event.h"
 
 

@@ -2,7 +2,9 @@
 #include "UHH2/core/include/Event.h"
 #include "UHH2/common/include/Utils.h"
 #include "UHH2/common/include/JetIds.h"
+#include "UHH2/HHtoWWbbSemiLeptonic/include/Functions.h"
 #include <math.h>
+
 
 #include "TH1F.h"
 #include "TH2F.h"
@@ -13,6 +15,10 @@ using namespace uhh2;
 using namespace uhh2examples;
 
 HHtoWWbbSemiLeptonicHists::HHtoWWbbSemiLeptonicHists(Context & ctx, const string & dirname): Hists(ctx, dirname){
+  // get GenRecoMatching
+  // Nur auf Signal anwenden!
+  //h_HHgenreco = ctx.get_handle<HHGenRecoMatching>("HHgenreco");
+
   // book all histograms here
   // jets
 
@@ -81,16 +87,39 @@ HHtoWWbbSemiLeptonicHists::HHtoWWbbSemiLeptonicHists(Context & ctx, const string
 
 
   // Mass reconstruction
-  MHH = book<TH1F>("MHH", "M^{HH} [GeV]", 50, 0, 500);
-  CHI2 = book<TH1F>("CHI2", "#chi^{2}", 100, 0, 500);
+  MHH = book<TH1F>("MHH", "M^{T,HH} [GeV]", 80, 150, 1000);
+  CHI2 = book<TH1F>("CHI2", "#chi^{2}", 50, 0, 25);
+
+
+  MH_bb = book<TH1F>("MH_bb", "M_{bb}^{#chi2} [GeV]", 100, 0, 500);
+  CHI2_H_bb = book<TH1F>("CHI2_H_bb", "#chi_{H->bb}^{2}", 50, 0, 25);
+  MH_WW = book<TH1F>("MH_WW", "M_{T,WW}^{#chi2} [GeV]", 100, 0, 500);
+  CHI2_H_WW = book<TH1F>("CHI2_H_WW", "#chi_{H->WW}^{2}", 50, 0, 25);
+
+  MH_bb_rebin = book<TH1F>("MH_bb_rebin", "M_{bb}^{#chi2} [GeV]", 40, 0, 200);
+  MH_WW_rebin = book<TH1F>("MH_WW_rebin", "M_{T,WW}^{#chi2} [GeV]", 40, 0, 200);
+
 
 
   MH_bb_simple = book<TH1F>("MH_bb_simple", "M_{bb}^{highest-pt} [GeV]", 100, 0, 500);
-  MH_bb = book<TH1F>("MH_bb", "M_{bb}^{#chi2} [GeV]", 100, 0, 500);
-  CHI2_H_bb = book<TH1F>("CHI2_H_bb", "#chi_{H->bb}^{2}", 100, 0, 500);
-
   MH_bb_simple_rebin = book<TH1F>("MH_bb_simple_rebin", "M_{bb}^{highest-pt} [GeV]", 40, 0, 200);
-  MH_bb_rebin = book<TH1F>("MH_bb_rebin", "M_{bb}^{#chi2} [GeV]", 40, 0, 200);
+
+
+  MH_WW_simple = book<TH1F>("MH_WW_simple", "M_{T,WW}^{highest-pt} [GeV]", 100, 0, 500);
+  MH_WW_simple_rebin = book<TH1F>("MH_WW_simple_rebin", "M_{T,WW}^{highest-pt} [GeV]", 40, 0, 200);
+
+  vector<double> bins_Mbb = {0,65,75,85,90,95,100,105,110,115,120,125,130,135,140,150,170,200};
+  vector<double> bins_MWW = {0,60,90,110,130,150,170,190,210,235,260,280,310,360,440,500};
+
+  MH_bb_limits = book<TH1F>("MH_bb_limits", "M_{bb}^{highest-pt} [GeV]", bins_Mbb.size()-1,&bins_Mbb[0]);
+  MH_WW_limits = book<TH1F>("MH_WW_limits", "M_{T,WW}^{highest-pt} [GeV]", bins_MWW.size()-1,&bins_MWW[0]);
+
+
+  Mbb_vs_MWW = book<TH2F>("Mbb_vs_MWW", "M_{bb}^{#chi2} [GeV] vs M_{T,WW}^{#chi2} [GeV]", 40,0,200,40,0,500);
+  Mbb_vs_MWW_limits = book<TH2F>("Mbb_vs_MWW_limits", "M_{bb}^{#chi2} [GeV] vs M_{T,WW}^{#chi2} [GeV]", bins_Mbb.size()-1,&bins_Mbb[0], bins_MWW.size()-1,&bins_MWW[0]);
+
+  
+
 
   sum_event_weights = book<TH1F>("sum_event_weights", "BinContent = sum(eventweights)", 1, 0.5, 1.5);
 
@@ -104,18 +133,29 @@ HHtoWWbbSemiLeptonicHists::HHtoWWbbSemiLeptonicHists(Context & ctx, const string
   h_chi2_H_bb = ctx.get_handle<float>("chi2_H_bb");
   h_mH_WW = ctx.get_handle<float>("mH_WW");
   h_chi2_H_WW = ctx.get_handle<float>("chi2_H_WW");
-  h_mH_mean = ctx.get_handle<float>("mH_mean");
+
+
 
 
 }
 
 
 void HHtoWWbbSemiLeptonicHists::fill(const Event & event){
-  // fill the histograms. Please note the comments in the header file:
-  // 'hist' is used here a lot for simplicity, but it will be rather
-  // slow when you have many histograms; therefore, better
-  // use histogram pointers as members as in 'UHH2/common/include/ElectronHists.h'
+  //cout << "Hists: fill" << endl;
+
+  /*
+  const auto & HHgenreco = event.get(h_HHgenreco);
   
+  HHMatchedJets B1_match = HHgenreco.B1_jets();
+  HHMatchedJets B2_match = HHgenreco.B2_jets();
+  HHMatchedJets Q1_match = HHgenreco.Q1_jets();
+  HHMatchedJets Q2_match = HHgenreco.Q2_jets();
+  // for mass reco: index of true jet combination.
+  int B1_index = B1_match.jet_index;
+  int B2_index = B2_match.jet_index;
+  int Q1_index = Q1_match.jet_index;
+  int Q2_index = Q2_match.jet_index;
+  */
   // Don't forget to always use the weight when filling.
   double weight = event.weight;
   sum_event_weights->Fill(1., weight);
@@ -132,22 +172,18 @@ void HHtoWWbbSemiLeptonicHists::fill(const Event & event){
     EMneutral_jet1->Fill(jets->at(0).neutralEmEnergyFraction(), weight);
     HADcharged_jet1->Fill(jets->at(0).chargedHadronEnergyFraction(), weight);
     HADneutral_jet1->Fill(jets->at(0).neutralHadronEnergyFraction(), weight);
-    
   }
   if(Njets>=2){
     eta_jet2->Fill(jets->at(1).eta(), weight);
     pt_jet2->Fill(jets->at(1).pt(), weight);
-
   }
   if(Njets>=3){
     eta_jet3->Fill(jets->at(2).eta(), weight);
     pt_jet3->Fill(jets->at(2).pt(), weight);
-
   }
   if(Njets>=4){
     eta_jet4->Fill(jets->at(3).eta(), weight);
     pt_jet4->Fill(jets->at(3).pt(), weight);
-
   }
   // pt_jets, eta_jets
   for(int i=0; i<Njets; i++)  {
@@ -175,7 +211,7 @@ void HHtoWWbbSemiLeptonicHists::fill(const Event & event){
   Jet b1;
   Jet b2;
   LorentzVector H_bb;
-
+  vector<LorentzVector> lightjets;
   for (unsigned int i =0; i<jets->size(); i++) {
     if(Btag_loose(jets->at(i),event))  Nbjets_loose++;
     if(Btag_medium(jets->at(i),event)) Nbjets_medium++;
@@ -187,9 +223,10 @@ void HHtoWWbbSemiLeptonicHists::fill(const Event & event){
       if(Ndeepjet_med == 1) {b1 =jets->at(i); H_bb+=jets->at(i).v4();}
       if(Ndeepjet_med == 2) {b2 =jets->at(i); H_bb+=jets->at(i).v4();}
     }
+    else {
+      lightjets.push_back(jets->at(i).v4());
+    }
     if(DeepjetTight(jets->at(i),event))  Ndeepjet_tight++;
-
-
   }
 
   N_bJets_loose->Fill(Nbjets_loose,weight);
@@ -200,7 +237,6 @@ void HHtoWWbbSemiLeptonicHists::fill(const Event & event){
   N_deepjet_tight->Fill(Ndeepjet_tight,weight);
 
   // Delta R 
-  
   if(Ndeepjet_med >= 2) {
     double dr = deltaR(b1, b2);
     DeltaR_bjets->Fill(dr,weight);
@@ -255,9 +291,47 @@ void HHtoWWbbSemiLeptonicHists::fill(const Event & event){
 
   STlep->Fill(st_lep, weight);
 
-  MH_bb_simple->Fill(H_bb.M(), weight);
-  MH_bb_simple_rebin->Fill(H_bb.M(), weight);
+  // Higgs Masses simple
+  double mbb = H_bb.M();
+  if(Ndeepjet_med >= 2) {
+    MH_bb_simple->Fill(mbb, weight);
+    MH_bb_simple_rebin->Fill(mbb, weight);
+    if(mbb < 190) MH_bb_limits->Fill(mbb, weight);
+    else          MH_bb_limits->Fill(190., weight);
+  }
+  if(lightjets.size() >= 2) {
+    LorentzVector lepton;
+    if(event.muons->size() == 1) lepton = event.muons->at(0).v4();
+    else if(event.electrons->size() == 1) lepton = event.electrons->at(0).v4();
+    else throw runtime_error("HHtoWWbbSemiLeptonicHists: no lepton or more than one leptons");  
+    LorentzVector neutrino = event.met->v4();
+    /*
+    for(unsigned int i=0; i<lightjets.size(); i++){
+      cout << "lightjet " << i << " pt: " << lightjets[i].Pt() << endl;
+    }
+    */
+    LorentzVector q1 = lightjets[0];
+    LorentzVector q2 = lightjets[1];
+    //LorentzVector q1 = lightjets[lightjets.size()-1];
+    //LorentzVector q2 = lightjets[lightjets.size()-2];
 
+    double mtWW = TransverseMass4particles(q1,q2,lepton,neutrino);
+
+    MH_WW_simple->Fill(mtWW, weight);
+    MH_WW_simple_rebin->Fill(mtWW, weight);
+    if(mtWW < 490) MH_WW_limits->Fill(mtWW, weight);
+    else           MH_WW_limits->Fill(490., weight);
+    
+    if(Ndeepjet_med >= 2) {
+      Mbb_vs_MWW->Fill(mbb,mtWW,weight);
+
+      // overflow bins
+      if(mbb<190 && mtWW <490) Mbb_vs_MWW_limits->Fill(mbb,mtWW,weight);
+      else if(mbb>=190 && mtWW < 490) Mbb_vs_MWW_limits->Fill(190.,mtWW,weight);
+      else if(mbb< 190 && mtWW >=490) Mbb_vs_MWW_limits->Fill(mbb,490.,weight);
+      else                            Mbb_vs_MWW_limits->Fill(190.,490.,weight);
+    }
+  }
 
   // reconstructed mass
   bool is_mHH_reconstructed = false;
@@ -283,9 +357,20 @@ void HHtoWWbbSemiLeptonicHists::fill(const Event & event){
     MH_bb->Fill(mH_bb, weight); 
     MH_bb_rebin->Fill(mH_bb, weight); 
 
+    double chi2_H_WW = event.get(h_chi2_H_WW);
+    double mH_WW = event.get(h_mH_WW);
+    //cout << "mH_WW: " << mH_WW << endl;
+   
+    CHI2_H_WW->Fill(chi2_H_WW, weight);
+    MH_WW->Fill(mH_WW, weight); 
+    MH_WW_rebin->Fill(mH_WW, weight); 
+
+    //Mbb_vs_MWW->Fill(mH_bb,mH_WW,weight);
+
   }
 
 
 }
+
 
 HHtoWWbbSemiLeptonicHists::~HHtoWWbbSemiLeptonicHists(){}

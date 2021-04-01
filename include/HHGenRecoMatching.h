@@ -20,6 +20,7 @@ struct HHMatchedJets {
   double dR_JetGen;
   LorentzVector gen;
   // LorentzVector gen;
+  int jet_index;
 };
 
 struct HHMatchedLepton {

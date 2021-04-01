@@ -4,6 +4,7 @@
 #include "UHH2/core/include/Event.h"
 #include "UHH2/HHtoWWbbSemiLeptonic/include/HHReconstructionHypothesisDiscriminators.h"
 #include "UHH2/HHtoWWbbSemiLeptonic/include/HHReconstructionHypothesis.h"
+#include "UHH2/HHtoWWbbSemiLeptonic/include/HHGenRecoMatching.h"
 
 namespace uhh2examples {
 
@@ -23,6 +24,8 @@ namespace uhh2examples {
     virtual ~HHtoWWbbSemiLeptonicHists();
 
   protected:
+    // double TransverseMass(LorentzVector A, LorentzVector B, double mA, double mB);
+    uhh2::Event::Handle<HHGenRecoMatching> h_HHgenreco;
 
     
 
@@ -51,6 +54,11 @@ namespace uhh2examples {
     TH1F *MHH, *CHI2;
     TH1F *MH_bb, *CHI2_H_bb, *MH_bb_simple;
     TH1F *MH_bb_rebin, *MH_bb_simple_rebin;
+    TH1F *MH_WW, *CHI2_H_WW, *MH_WW_simple;
+    TH1F *MH_WW_rebin, *MH_WW_simple_rebin;
+
+    TH1F *MH_bb_limits, *MH_WW_limits;
+    TH2F *Mbb_vs_MWW, *Mbb_vs_MWW_limits;
 
     // stuff
     TH1F *sum_event_weights;
@@ -64,7 +72,6 @@ namespace uhh2examples {
     uhh2::Event::Handle<float> h_mHH, h_chi2;
     uhh2::Event::Handle<float> h_mH_bb, h_chi2_H_bb;
     uhh2::Event::Handle<float> h_mH_WW, h_chi2_H_WW;
-    uhh2::Event::Handle<float> h_mH_mean;
 
   };
 }

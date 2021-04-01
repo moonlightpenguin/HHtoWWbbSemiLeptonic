@@ -21,8 +21,9 @@ public:
 private:
   uhh2::Event::Handle<std::vector<HHReconstructionHypothesis>> h_hyps;
   uhh2::Event::Handle<bool> h_is_mHH_reconstructed;
-  uhh2::Event::Handle<float> h_mH_mean, h_mH_bb, h_mH_WW;
+  uhh2::Event::Handle<float> h_mH_bb, h_mH_WW;
   uhh2::Event::Handle<float> h_chi2_H_bb, h_chi2_H_WW;
   uhh2::Event::Handle<float> h_mHH, h_chi2;
+  uhh2::Event::Handle<int> h_b1_index, h_b2_index, h_q1_index, h_q2_index;
   cfg config;
 };
