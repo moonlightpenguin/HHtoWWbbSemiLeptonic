@@ -1,0 +1,96 @@
+#include "../include/cosmetics.h"
+#include "../include/Tools.h"
+#include <TString.h>
+#include <iostream>
+#include <TStyle.h>
+#include <TFile.h>
+#include <TH1.h>
+#include <TH2.h>
+#include <TCanvas.h>
+#include <TText.h>
+#include <TPaveText.h>
+#include <TGaxis.h>
+#include <TGraph.h>
+#include <TStyle.h>
+#include <TGraphAsymmErrors.h>
+#include <TLegend.h>
+#include <TLegendEntry.h>
+#include <TROOT.h>
+#include <TKey.h>
+#include <TLatex.h>
+#include <TClass.h>
+#include <fstream>
+
+using namespace std;
+
+void AnalysisTool::ProduceCombineHistograms(TString ch){
+  cout << "ProduceCombinedHistograms:"<< endl;
+  cout << "year: " << AnalysisTool::yeartag << endl;
+
+
+  vector<TString> systematics = {"NOMINAL"};
+  vector<TString> region_tags = {"catA"};
+  vector<TString> channel_tags = {"srmu"};
+  vector<TString> histinname_base = {"Mbb_vs_MWW_limits"};
+  vector<TString> histoutname_base = {"mH"};
+  vector<TString> samples_base = {"HHtoWWbbSemiLeptonic_SM", "SingleTop", "TTbar", "DYJets", "Diboson", "QCDMu", "TTV", "WJets", "DATA_Muon"};
+  TString histname = "Finalselection_mHH_reconstructed_General/";
+  histname += "/Mbb_vs_MWW_limits";  
+
+  TString outfilename = AnalysisTool::combine_path + "input/combine_histograms_" + AnalysisTool::year + ".root"; 
+  TFile* f_out = new TFile(outfilename, "RECREATE");
+
+  /*
+    for(region)
+    for(channel)
+    for(systematics)
+    for(systshift)
+    for(samples)
+  */
+  for(unsigned int region = 0; region <region_tags.size(); region++) {
+    for(unsigned int channel=0; channel<channel_tags.size(); channel++) {
+      cout << "=========== Channel: " << channel_tags[channel] << ", Region: " << region_tags[region] << endl;
+      for(unsigned int k=0; k<systematics.size(); k++) {
+	TString syst = systematics[k];
+	  cout << "======== Syst: " << syst << endl;
+	TString infilename_base = AnalysisTool::base_path  + AnalysisTool::year + "/" + full_tag + "/" + syst + "/uhh2.AnalysisModuleRunner."; // should be inside systematics loop
+
+	// for(unsigned int j=0; j<systshift.size(); j++)
+	for(unsigned int i=0; i<samples_base.size(); i++) {
+	  TString proc = samples_base[i];
+	  TString tag = "MC.";
+	  if(proc.Contains("DATA")) tag ="DATA.";
+	  TString infilename = infilename_base + tag + proc + "_" + yeartag + ".root";
+	  TFile* f_in = new TFile(infilename);
+	  TString histname = "Finalselection_mHH_reconstructed_General/" + histinname_base[region];  
+	  TH2F* h_in = (TH2F*) f_in->Get(histname); // enroll
+
+	  TH1F* h_out = new TH1F("h_out", histoutname_base[region], h_in->GetNbinsX()*h_in->GetNbinsY(), -0.5, h_in->GetNbinsX()*h_in->GetNbinsY()-0.5);
+	  for(int a=0; a<h_in->GetNbinsX()+1; a++) {
+	    for(int b=0; b<h_in->GetNbinsY()+1; b++) {
+	      int bin = h_in->GetBin(a,b);
+	      h_out->SetBinContent(bin, h_in->GetBinContent(bin));
+	    }
+	  }
+	  // enrolling done
+	  if(proc.Contains("DATA")) proc = "data_obs";
+	  TString histname_out = histoutname_base[region] + "_" + channel_tags[channel] + "_" + region_tags[region] + "__" + proc + "_" + AnalysisTool::yeartag;
+
+	  h_out->SetName(histname_out);
+	  f_out->cd();
+	  h_out->Write();
+	  f_in->Close();
+	}
+      }
+    }
+  }
+  
+  
+
+
+
+
+  cout << "finished!" << endl;
+
+  
+}
