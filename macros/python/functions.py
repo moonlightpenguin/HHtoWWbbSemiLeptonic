@@ -137,5 +137,6 @@ def create_datacard(year, node, category, channel, backgrounds, systematics, pat
 
 
 
-    lines = lines_header + lines_channels + lines_input + lines_processes + lines_systematics + lines_statistics
+    #lines = lines_header + lines_channels + lines_input + lines_processes + lines_systematics + lines_statistics
+    lines = lines_header + lines_channels + lines_input + lines_processes + lines_systematics
     write_lines(path_datacards + '/', filename_datacard, lines)

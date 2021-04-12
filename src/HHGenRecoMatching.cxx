@@ -107,11 +107,16 @@ HHGenRecoProducer::HHGenRecoProducer(uhh2::Context & ctx, const std::string & na
 
 bool HHGenRecoProducer::process(Event & event) {
   const HHGenObjects & HHgen = event.get(h_HHgenobjects);
-  
-  const LorentzVector & lepton = event.muons->at(0).v4();
-  // if(ele_region) lepton = event.electrons->at(0).v4();
   const LorentzVector & met = event.met->v4();
 
-  event.set(h_HHgenrecomatching, HHGenRecoMatching(*event.jets, lepton, met, HHgen, throw_on_failure));
+  if(event.muons->size() == 1) {
+    const LorentzVector & mu = event.muons->at(0).v4();
+    event.set(h_HHgenrecomatching, HHGenRecoMatching(*event.jets, mu, met, HHgen, throw_on_failure));
+  }
+  else if (event.electrons->size() == 1) {
+    const LorentzVector & ele = event.electrons->at(0).v4();
+    event.set(h_HHgenrecomatching, HHGenRecoMatching(*event.jets, ele, met, HHgen, throw_on_failure));
+  }
+  else throw runtime_error("In HHGenRecoMatching: neither srmu nor srele");
   return true;
 }

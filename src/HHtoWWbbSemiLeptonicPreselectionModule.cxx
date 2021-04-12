@@ -81,7 +81,7 @@ namespace uhh2examples {
       book_HFolder(mytag, new HHtoWWbbSemiLeptonicPreselectionHists(ctx,mytag));
       mytag = tag+"_Signal"; 
       book_HFolder(mytag, new HHtoWWbbSemiLeptonicGenHists(ctx,mytag));
-      mytag = tag+"_GenRecoMatched"; 
+      mytag = tag+"_Matched"; 
       //book_HFolder(mytag, new HHtoWWbbSemiLeptonicMatchedHists(ctx,mytag));
       /*
 	mytag = tag+"_Muons";
@@ -102,7 +102,7 @@ namespace uhh2examples {
     if(is_signal) {
       mytag = tag+"_Signal";
       HFolder(mytag)->fill(event);
-      mytag = tag+"_GenRecoMatched"; 
+      mytag = tag+"_Matched"; 
       //HFolder(mytag)->fill(event);
     }
     /*
@@ -158,7 +158,7 @@ HHtoWWbbSemiLeptonicPreselectionModule::HHtoWWbbSemiLeptonicPreselectionModule(C
     // Object IDs
     //cout << "Year: " << year << endl;
     JetId jet_pfid = JetPFID(JetPFID::WP_TIGHT_CHS);
-    EleId = AndId<Electron>(ElectronID_Fall17_tight, PtEtaCut(24.0, 2.4));
+    EleId = AndId<Electron>(ElectronID_Fall17_tight, PtEtaCut(28.0, 2.4));
     if (year == Year::is2016v2) MuId = AndId<Muon>(MuonID(Muon::Tight), PtEtaCut(25.0, 2.4), MuonIso(0.15));
     else                        MuId = AndId<Muon>(MuonID(Muon::CutBasedIdTight), PtEtaCut(25.0, 2.4), MuonID(Muon::PFIsoTight));
     Jet_ID = AndId<Jet>(jet_pfid, PtEtaCut(30.0, 2.4));
@@ -200,7 +200,7 @@ HHtoWWbbSemiLeptonicPreselectionModule::HHtoWWbbSemiLeptonicPreselectionModule(C
 
 
     // Book Histograms
-    vector<string> histogram_tags = {"NoCuts", "Cleaner", "1Lepton", "1ElectronCategory", "1MuonCategory", "3Jets", "1Bjet", "4Jets"};
+    vector<string> histogram_tags = {"NoCuts", "Cleaner", "1Lepton", "1Lepton_srele", "1Lepton_srmu", "3Jets_srele", "3Jets_srmu", "1Bjet_srele", "1Bjet_srmu", "4Jets_srele", "4Jets_srmu"};
     book_histograms(ctx, histogram_tags);
 }
 
@@ -221,30 +221,32 @@ HHtoWWbbSemiLeptonicPreselectionModule::HHtoWWbbSemiLeptonicPreselectionModule(C
     //cout << "Line: " << __LINE__ << endl;
     fill_histograms(event,"Cleaner");
 
+
     // event ID ausgeben
-    bool electronCategory = electron_sel->passes(event) && noMuon_sel->passes(event);
-    bool muonCategory = muon_sel->passes(event) && noElectron_sel->passes(event);
+    bool electronCategory = electron_sel->passes(event) && noMuon_sel->passes(event); // N_e == 1, N_mu == 0
+    bool muonCategory = muon_sel->passes(event) && noElectron_sel->passes(event); // N_e == 0, N_mu == 1
 
     if(!electronCategory && !muonCategory) return false; 
     fill_histograms(event, "1Lepton");
 
     if(electronCategory) {
-      fill_histograms(event, "1ElectronCategory");
+      fill_histograms(event, "1Lepton_srele");
     }
-    if(muonCategory) {
-      fill_histograms(event, "1MuonCategory");
+    else if(muonCategory) {
+      fill_histograms(event, "1Lepton_srmu");
     }
-    
-    if(!muonCategory) return false; // for now only the muon channel
-
+   
 
     if(!njet3_sel->passes(event)) return false;
-    fill_histograms(event, "3Jets");
-
+    if(electronCategory) fill_histograms(event, "3Jets_srele");
+    else if(muonCategory) fill_histograms(event, "3Jets_srmu");
     // take these cuts out of the selection, but keep the histograms
     if(nbtag_medium_sel->passes(event)) {
-      fill_histograms(event, "1Bjet");
-      if(njet4_sel->passes(event)) fill_histograms(event, "4Jets");
+      if(electronCategory) fill_histograms(event, "1Bjet_srele");
+      else if(muonCategory) fill_histograms(event, "1Bjet_srmu");
+
+      if(njet4_sel->passes(event) && electronCategory) fill_histograms(event, "4Jets_srele");
+      else if(njet4_sel->passes(event) && muonCategory) fill_histograms(event, "4Jets_srmu");
     }
 
     return true;

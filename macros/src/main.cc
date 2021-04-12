@@ -25,7 +25,7 @@ int main(){
 
   //Analysis16.Efficiencies(selection, cutsJet10, someProcesses);
   //Analysis16.ControlPlots(selection, cutsJet10, someProcesses);
-  Analysis16.ControlPlots(selection, cutsLep5, someProcesses);
+  //Analysis16.ControlPlots(selection, cutsLep5, someProcesses);
 
 
   //TString plot_ptJet3 = "1MuonCategory_General/pt_jet3";
@@ -38,7 +38,11 @@ int main(){
 
   //  Analysis16.SignalToBackground(cutsJet10, plot_ptJet3);
   //  Analysis16.SignalToBackground(cutsJet10, plot_ptJet3);
-  Analysis16.SignalToBackground(cutsLep5, plot_ptMu);
+  //  Analysis16.SignalToBackground(cutsLep5, plot_ptMu);
+
+
+
+  Analysis16.ProduceCombineHistograms();
 
 
   cout << "Finished main(). cya." << endl;

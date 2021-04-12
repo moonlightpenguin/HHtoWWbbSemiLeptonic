@@ -59,6 +59,7 @@ namespace uhh2examples {
 
     TH1F *MH_bb_limits, *MH_WW_limits;
     TH2F *Mbb_vs_MWW, *Mbb_vs_MWW_limits;
+    TH2F *Mbb_vs_MWW_limits1, *Mbb_vs_MWW_limits2, *Mbb_vs_MWW_limits3;
 
     // stuff
     TH1F *sum_event_weights;

@@ -26,8 +26,8 @@ namespace uhh2examples {
 
     TH2F* pt_H1_vs_pt_H2, *M_H1_vs_M_H2;
 
-    TH1F* b1_correct_chi2, *b2_correct_chi2, *b1_correct_highestPt, *b2_correct_highestPt, *q1_correct_chi2, *q2_correct_chi2;
-    TH1F* Hbb_correct_chi2, *Hbb_correct_highestPt, *WHad_correct_chi2;
+    TH1F* b1_correct_chi2, *b2_correct_chi2, *b1_correct_highestPt, *b2_correct_highestPt, *q1_correct_chi2, *q2_correct_chi2, *q1_correct_highestPt, *q2_correct_highestPt, *q1_correct_lowestPt, *q2_correct_lowestPt;
+      TH1F* Hbb_correct_chi2, *Hbb_correct_highestPt, *WHad_correct_chi2, *WHad_correct_highestPt, *WHad_correct_lowestPt;
     
     uhh2::Event::Handle<bool> h_is_mHH_reconstructed;
     uhh2::Event::Handle<float> h_mH_bb;

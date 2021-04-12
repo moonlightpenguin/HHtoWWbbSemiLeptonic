@@ -12,7 +12,22 @@
 <!-- Signal Samples -->
 
 
-<!ENTITY HHtoWWbbSemiLeptonic_SM SYSTEM "/nfs/dust/cms/user/frahmmat/CMSSW_10_2_X_v2/CMSSW_10_2_17/src/UHH2/common/UHH2-datasets/RunII_102X_v2/2016v3/GluGluToHHTo2B2WToLNu2J_node_SM_TuneCUETP8M1_PSWeights_13TeV-madgr_Summer16_v1.xml">
+<!ENTITY HHtoWWbbSemiLeptonic_SM SYSTEM "/nfs/dust/cms/user/frahmmat/CMSSW_10_2_X_v2/CMSSW_10_2_17/src/UHH2/common/UHH2-datasets/RunII_102X_v2/2016v3/HHtoWWbbSemiLeptonic/GluGluToHHTo2B2WToLNu2J_node_SM_TuneCUETP8M1_PSWeights_13TeV-madgra_Summer16_v1.xml">
+<!ENTITY HHtoWWbbSemiLeptonic_1 SYSTEM "/nfs/dust/cms/user/frahmmat/CMSSW_10_2_X_v2/CMSSW_10_2_17/src/UHH2/common/UHH2-datasets/RunII_102X_v2/2016v3/HHtoWWbbSemiLeptonic/GluGluToHHTo2B2WToLNu2J_node_1_TuneCUETP8M1_PSWeights_13TeV-madgra_Summer16_v1.xml">
+<!ENTITY HHtoWWbbSemiLeptonic_2 SYSTEM "/nfs/dust/cms/user/frahmmat/CMSSW_10_2_X_v2/CMSSW_10_2_17/src/UHH2/common/UHH2-datasets/RunII_102X_v2/2016v3/HHtoWWbbSemiLeptonic/GluGluToHHTo2B2WToLNu2J_node_2_TuneCUETP8M1_PSWeights_13TeV-madgra_Summer16_v1.xml">
+<!ENTITY HHtoWWbbSemiLeptonic_3 SYSTEM "/nfs/dust/cms/user/frahmmat/CMSSW_10_2_X_v2/CMSSW_10_2_17/src/UHH2/common/UHH2-datasets/RunII_102X_v2/2016v3/HHtoWWbbSemiLeptonic/GluGluToHHTo2B2WToLNu2J_node_3_TuneCUETP8M1_PSWeights_13TeV-madgra_Summer16_v1.xml">
+<!ENTITY HHtoWWbbSemiLeptonic_4 SYSTEM "/nfs/dust/cms/user/frahmmat/CMSSW_10_2_X_v2/CMSSW_10_2_17/src/UHH2/common/UHH2-datasets/RunII_102X_v2/2016v3/HHtoWWbbSemiLeptonic/GluGluToHHTo2B2WToLNu2J_node_4_TuneCUETP8M1_PSWeights_13TeV-madgra_Summer16_v1.xml">
+<!ENTITY HHtoWWbbSemiLeptonic_5 SYSTEM "/nfs/dust/cms/user/frahmmat/CMSSW_10_2_X_v2/CMSSW_10_2_17/src/UHH2/common/UHH2-datasets/RunII_102X_v2/2016v3/HHtoWWbbSemiLeptonic/GluGluToHHTo2B2WToLNu2J_node_5_TuneCUETP8M1_PSWeights_13TeV-madgra_Summer16_v1.xml">
+<!ENTITY HHtoWWbbSemiLeptonic_6 SYSTEM "/nfs/dust/cms/user/frahmmat/CMSSW_10_2_X_v2/CMSSW_10_2_17/src/UHH2/common/UHH2-datasets/RunII_102X_v2/2016v3/HHtoWWbbSemiLeptonic/GluGluToHHTo2B2WToLNu2J_node_6_TuneCUETP8M1_PSWeights_13TeV-madgra_Summer16_v1.xml">
+<!ENTITY HHtoWWbbSemiLeptonic_7 SYSTEM "/nfs/dust/cms/user/frahmmat/CMSSW_10_2_X_v2/CMSSW_10_2_17/src/UHH2/common/UHH2-datasets/RunII_102X_v2/2016v3/HHtoWWbbSemiLeptonic/GluGluToHHTo2B2WToLNu2J_node_7_TuneCUETP8M1_PSWeights_13TeV-madgra_Summer16_v1.xml">
+<!ENTITY HHtoWWbbSemiLeptonic_8 SYSTEM "/nfs/dust/cms/user/frahmmat/CMSSW_10_2_X_v2/CMSSW_10_2_17/src/UHH2/common/UHH2-datasets/RunII_102X_v2/2016v3/HHtoWWbbSemiLeptonic/GluGluToHHTo2B2WToLNu2J_node_8_TuneCUETP8M1_PSWeights_13TeV-madgra_Summer16_v1.xml">
+<!ENTITY HHtoWWbbSemiLeptonic_9 SYSTEM "/nfs/dust/cms/user/frahmmat/CMSSW_10_2_X_v2/CMSSW_10_2_17/src/UHH2/common/UHH2-datasets/RunII_102X_v2/2016v3/HHtoWWbbSemiLeptonic/GluGluToHHTo2B2WToLNu2J_node_9_TuneCUETP8M1_PSWeights_13TeV-madgra_Summer16_v1.xml">
+<!ENTITY HHtoWWbbSemiLeptonic_10 SYSTEM "/nfs/dust/cms/user/frahmmat/CMSSW_10_2_X_v2/CMSSW_10_2_17/src/UHH2/common/UHH2-datasets/RunII_102X_v2/2016v3/HHtoWWbbSemiLeptonic/GluGluToHHTo2B2WToLNu2J_node_10_TuneCUETP8M1_PSWeights_13TeV-madgra_Summer16_v10.xml">
+<!ENTITY HHtoWWbbSemiLeptonic_11 SYSTEM "/nfs/dust/cms/user/frahmmat/CMSSW_10_2_X_v2/CMSSW_10_2_17/src/UHH2/common/UHH2-datasets/RunII_102X_v2/2016v3/HHtoWWbbSemiLeptonic/GluGluToHHTo2B2WToLNu2J_node_11_TuneCUETP8M1_PSWeights_13TeV-madgra_Summer16_v1.xml">
+<!ENTITY HHtoWWbbSemiLeptonic_12 SYSTEM "/nfs/dust/cms/user/frahmmat/CMSSW_10_2_X_v2/CMSSW_10_2_17/src/UHH2/common/UHH2-datasets/RunII_102X_v2/2016v3/HHtoWWbbSemiLeptonic/GluGluToHHTo2B2WToLNu2J_node_12_TuneCUETP8M1_PSWeights_13TeV-madgra_Summer16_v1.xml">
+
+
+
 
 
 <!-- Background: TTbar, WJets, DYJets (SingleTop, Diboson, TTV, QCD?) -->
@@ -149,7 +164,7 @@
 	<Cycle Name="uhh2::AnalysisModuleRunner" OutputDirectory="&PRESELdir;/" PostFix="" TargetLumi="&TargetLumi;" >
 
 <!-- DATA -->
-<!--
+
 		<InputData Lumi="1" NEventsMax="&NEVT;" Type="DATA" Version="DATA_Muon_B_2016v3" Cacheable="&b_Cacheable;">
 			&DATA_Muon_B;
 			<InputTree Name="AnalysisTree" />
@@ -192,10 +207,10 @@
 			<OutputTree Name="AnalysisTree" />
 		</InputData>
 
--->
 
 
-<!--
+
+
 
 		<InputData Lumi="1" NEventsMax="&NEVT;" Type="DATA" Version="DATA_Electron_B_2016v3" Cacheable="&b_Cacheable;">
 			&DATA_Electron_B;
@@ -293,7 +308,7 @@
 			<OutputTree Name="AnalysisTree" />
 		</InputData>
 
--->
+
 
 
 <!-- SIGNAL (check lumi with Matthias) -->
@@ -647,7 +662,6 @@
 
 
 
-<!--
 
 		<InputData Lumi="1.726427995" NEventsMax="&NEVT;" Type="MC" Version="QCD_EM_Pt-20to30_2016v3" Cacheable="&b_Cacheable;">
 			&QCD_EM_PT20to30;
@@ -732,7 +746,6 @@
 		</InputData>
 
 
--->
 
 
 

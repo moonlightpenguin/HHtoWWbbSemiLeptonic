@@ -108,8 +108,12 @@ HHtoWWbbSemiLeptonicHists::HHtoWWbbSemiLeptonicHists(Context & ctx, const string
   MH_WW_simple = book<TH1F>("MH_WW_simple", "M_{T,WW}^{highest-pt} [GeV]", 100, 0, 500);
   MH_WW_simple_rebin = book<TH1F>("MH_WW_simple_rebin", "M_{T,WW}^{highest-pt} [GeV]", 40, 0, 200);
 
-  vector<double> bins_Mbb = {0,65,75,85,90,95,100,105,110,115,120,125,130,135,140,150,170,200};
-  vector<double> bins_MWW = {0,60,90,110,130,150,170,190,210,235,260,280,310,360,440,500};
+  //vector<double> bins_Mbb = {0,65,75,85,90,95,100,105,110,115,120,125,130,135,140,150,170,200};
+  //vector<double> bins_MWW = {0,80,100,120,140,160,180,200,220,245,270,300,340,380,440,500};
+
+  vector<double> bins_Mbb = {0,70,85,95,100,105,110,115,120,125,130,140,180,200};
+  vector<double> bins_MWW = {0,100,130,160,190,220,260,300,350,410,480,500};
+
 
   MH_bb_limits = book<TH1F>("MH_bb_limits", "M_{bb}^{highest-pt} [GeV]", bins_Mbb.size()-1,&bins_Mbb[0]);
   MH_WW_limits = book<TH1F>("MH_WW_limits", "M_{T,WW}^{highest-pt} [GeV]", bins_MWW.size()-1,&bins_MWW[0]);
@@ -117,9 +121,9 @@ HHtoWWbbSemiLeptonicHists::HHtoWWbbSemiLeptonicHists(Context & ctx, const string
 
   Mbb_vs_MWW = book<TH2F>("Mbb_vs_MWW", "M_{bb}^{#chi2} [GeV] vs M_{T,WW}^{#chi2} [GeV]", 40,0,200,40,0,500);
   Mbb_vs_MWW_limits = book<TH2F>("Mbb_vs_MWW_limits", "M_{bb}^{#chi2} [GeV] vs M_{T,WW}^{#chi2} [GeV]", bins_Mbb.size()-1,&bins_Mbb[0], bins_MWW.size()-1,&bins_MWW[0]);
-
-  
-
+  Mbb_vs_MWW_limits = book<TH2F>("Mbb_vs_MWW_limits1", "M_{bb}^{highest-pt} [GeV] vs M_{T,WW}^{#chi2} [GeV]", bins_Mbb.size()-1,&bins_Mbb[0], bins_MWW.size()-1,&bins_MWW[0]);
+  Mbb_vs_MWW_limits = book<TH2F>("Mbb_vs_MWW_limits2", "M_{bb}^{highest-pt} [GeV] vs M_{T,WW}^{highest-pt} [GeV]", bins_Mbb.size()-1,&bins_Mbb[0], bins_MWW.size()-1,&bins_MWW[0]);
+  Mbb_vs_MWW_limits = book<TH2F>("Mbb_vs_MWW_limits3", "M_{bb}^{highest-pt} [GeV] vs M_{T,WW}^{lowest-pt} [GeV]", bins_Mbb.size()-1,&bins_Mbb[0], bins_MWW.size()-1,&bins_MWW[0]);
 
   sum_event_weights = book<TH1F>("sum_event_weights", "BinContent = sum(eventweights)", 1, 0.5, 1.5);
 

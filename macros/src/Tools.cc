@@ -1,4 +1,4 @@
-#include <TString.h>
+ #include <TString.h>
 #include <TFile.h>
 #include <iostream>
 
@@ -9,6 +9,8 @@ using namespace std;
 AnalysisTool::AnalysisTool(int year_) {
   base_path = "/nfs/dust/cms/user/frahmmat/HHtoWWbbSemiLeptonic/";
   uhh2_path = "/nfs/dust/cms/user/frahmmat/CMSSW_10_2_X_v2/CMSSW_10_2_17/src/UHH2/";
+  //combine_path ="../data/datacards/";
+  combine_path = "/nfs/dust/cms/user/frahmmat/CMSSW_10_2_X_v2/CMSSW_10_2_17/src/UHH2/HHtoWWbbSemiLeptonic/data/datacards/";
   pre_tag = "Preselection";
   full_tag = "Fullselection";
 
@@ -25,18 +27,19 @@ AnalysisTool::AnalysisTool(int year_) {
   // processes
   signal_tag = "HHtoWWbbSemiLeptonic_SM";
   backgrounds_tag = {"TTbar", "DYJets", "QCDMu", "Diboson", "SingleTop", "TTV", "WJets"};
+  main_backgrounds_tag = {"TTbar", "DYJets", "WJets"};
 
   //colors
   proc_colors = {
-    {"HHtoWWbbSemiLeptonic_SM", 416},
+    {"HHtoWWbbSemiLeptonic_SM", 1},
     {"DATA_Muon", 1},
     {"TTbar", 810},
     {"DYJets", 798},
-    {"QCDMu", 613},
-    {"Diboson", 801},
-    {"SingleTop", 860},
-    {"TTV", 867},
-    {"WJets", 413}
+    {"QCDMu", 867},
+    {"Diboson", 860},
+    {"SingleTop", 801},
+    {"TTV", 413},
+    {"WJets", 613}
   };
 
 }

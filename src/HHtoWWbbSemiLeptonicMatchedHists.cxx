@@ -21,10 +21,10 @@ void fillJetIdMatching2p(int id1_reco, int id2_reco, int id1_true, int id2_true,
   // -1: one parton is not matched
   //  1: correct matching and one correct jet
   //  0: correct matching but no correct jets
-  if((id1_reco == id1_true && id2_reco == id2_true) || (id1_reco == id1_true && id2_reco == id2_true)) h->Fill(2.,weight);
+  if((id1_reco == id1_true && id2_reco == id2_true) || (id2_reco == id1_true && id1_reco == id2_true)) h->Fill(2.,weight);
   else if (id1_true == -1 && id2_true == -1) h->Fill(-2., weight);
   else if (id1_true == -1 || id2_true == -1) h->Fill(-1., weight);
-  else if((id1_reco == id1_true || id2_reco == id2_true) || (id1_reco == id1_true || id2_reco == id2_true)) h->Fill(1.,weight);
+  else if((id1_reco == id1_true || id2_reco == id2_true) || (id2_reco == id1_true || id1_reco == id2_true)) h->Fill(1.,weight);
   else h->Fill(0., weight);
 }
 
@@ -48,9 +48,9 @@ HHtoWWbbSemiLeptonicMatchedHists::HHtoWWbbSemiLeptonicMatchedHists(Context & ctx
   book<TH1F>("M_H_b_matched", "M_{bb}^{matched} [GeV]", 50, 0, 300);
   book<TH1F>("M_H_b_matched1", "M_{bb}^{matched} [GeV]", 40, 0, 200);
   book<TH1F>("M_H_W_matched", "M_{WW}^{mached} [GeV]", 50, 0, 300);
-  book<TH1F>("M_H_W_semimatched", "M_{WW}^{matched} [GeV] (semimatched)", 50, 0, 300);
+  book<TH1F>("M_H_W_genN", "M_{WW}^{matched} [GeV] (genNeutrino)", 50, 0, 300);
   book<TH1F>("MT_H_W_matched", "M_{T,WW}^{matched} [GeV]", 50, 0, 300);
-  book<TH1F>("MT_H_W_semimatched", "M_{T,WW}^{matched} [GeV] (semimatched)", 50, 0, 300);
+  book<TH1F>("MT_H_W_genN", "M_{T,WW}^{matched} [GeV] (genNeutrino)", 50, 0, 300);
   book<TH1F>("MT_H_W_gen", "M_{T,WW}^{gen} [GeV]", 50, 0, 300);
 
   book<TH1F>("MT_H_W_test", "M_{T,WW}^{matched} [GeV] (test)", 50, 0, 300);
@@ -93,7 +93,7 @@ HHtoWWbbSemiLeptonicMatchedHists::HHtoWWbbSemiLeptonicMatchedHists(Context & ctx
 
   // W's
   
-  book<TH1F>("M_WLep_semimatched", "M_{WLep} [GeV] (semimatched)", 80, 0, 150);
+  book<TH1F>("M_WLep_genN", "M_{WLep} [GeV] (genNeutrino)", 80, 0, 150);
   book<TH1F>("M_WLep", "M_{WLep}^{matched} [GeV]", 80, 0, 150);
   book<TH1F>("M_WHad", "M_{WHad}^{matched} [GeV]", 80, 0, 150);
   book<TH1F>("MT_WLep", "M_{T,WLep}^{matched} [GeV]", 80, 0, 150);
@@ -176,10 +176,18 @@ HHtoWWbbSemiLeptonicMatchedHists::HHtoWWbbSemiLeptonicMatchedHists(Context & ctx
   q1_correct_chi2 = book<TH1F>("q1_correct_chi2", "q1 correct #chi^2", 3,-1.5,1.5);
   q2_correct_chi2 = book<TH1F>("q2_correct_chi2", "q2 correct #chi^2", 3,-1.5,1.5);
   
+  q1_correct_highestPt = book<TH1F>("q1_correct_highestPt", "q1 correct highest-pt", 3,-1.5,1.5);
+  q2_correct_highestPt = book<TH1F>("q2_correct_highestPt", "q2 correct highest-pt", 3,-1.5,1.5);
+  q1_correct_lowestPt = book<TH1F>("q1_correct_lowestPt", "q1 correct lowest-pt", 3,-1.5,1.5);
+  q2_correct_lowestPt = book<TH1F>("q2_correct_lowestPt", "q2 correct lowest-pt", 3,-1.5,1.5);
+
   Hbb_correct_chi2 = book<TH1F>("Hbb_correct_chi2", "Hbb correct #chi^2", 5, -2.5,2.5);
   Hbb_correct_highestPt = book<TH1F>("Hbb_correct_highestPt", "Hbb correct highest-pt", 5, -2.5,2.5);
 
   WHad_correct_chi2 = book<TH1F>("WHad_correct_chi2", "WHad correct #chi^2", 5, -2.5,2.5);
+  WHad_correct_highestPt = book<TH1F>("WHad_correct_highestPt", "WHad correct highest-pt", 5, -2.5,2.5);
+  WHad_correct_lowestPt = book<TH1F>("WHad_correct_lowestPt", "WHad correct lowest-pt", 5, -2.5,2.5);
+
 
 }
 
@@ -191,7 +199,7 @@ void HHtoWWbbSemiLeptonicMatchedHists::fill(const Event & event) {
   
   double weight = event.weight;
   const auto & HHgenreco = event.get(h_HHgenreco);
-  // cout << "Line: " << __LINE__ << endl;
+  // cout << "MatchedHists Line: " << __LINE__ << endl;
 
 
 
@@ -305,14 +313,14 @@ void HHtoWWbbSemiLeptonicMatchedHists::fill(const Event & event) {
 
   // (semi-) reco
   LorentzVector WHad = Q1+Q2;
-  LorentzVector WLep_semimatched = L + N_gen;
+  LorentzVector WLep_genN = L + N_gen;
   LorentzVector WLep = L + N;
 
   double MT_WHad = TransverseMass(Q1,Q2,0,0);
   double MT_WLep = TransverseMass(L,N,0,0);
-  double MT_WLep_semimatched = TransverseMass(L,N_gen,0,0);
+  double MT_WLep_genN = TransverseMass(L,N_gen,0,0);
   double MT_H_W = TransverseMass(WHad,WLep,MT_WHad,MT_WLep);
-  double MT_H_W_semimatched = TransverseMass(WHad,WLep_semimatched,MT_WHad,MT_WLep_semimatched);
+  double MT_H_W_genN = TransverseMass(WHad,WLep_genN,MT_WHad,MT_WLep_genN);
   double MT_H_W_test = TransverseMass(WHad,WLep,min(85.,MT_WHad),min(85.,MT_WLep));
   /*
   cout << "TEST:" << endl;
@@ -328,9 +336,9 @@ void HHtoWWbbSemiLeptonicMatchedHists::fill(const Event & event) {
   // WHad
   if(Q1_match.matched && Q2_match.matched) {
     hist("M_H_W_matched")->Fill((WHad+WLep).M(), weight);
-    hist("M_H_W_semimatched")->Fill((WHad+WLep_semimatched).M(), weight);
+    hist("M_H_W_genN")->Fill((WHad+WLep_genN).M(), weight);
     hist("MT_H_W_matched")->Fill(MT_H_W, weight);
-    hist("MT_H_W_semimatched")->Fill(MT_H_W_semimatched, weight);
+    hist("MT_H_W_genN")->Fill(MT_H_W_genN, weight);
     hist("MT_H_W_gen")->Fill(MT_H_W_gen, weight);
     hist("MT_H_W_test")->Fill(MT_H_W_test, weight);
 
@@ -369,7 +377,7 @@ void HHtoWWbbSemiLeptonicMatchedHists::fill(const Event & event) {
     hist("MT_WLep")->Fill(MT_WLep, weight);    
     hist("MT_WLep_gen")->Fill(MT_WLep_gen, weight);
 
-    hist("M_WLep_semimatched")->Fill(WLep_semimatched.M(), weight);
+    hist("M_WLep_genN")->Fill(WLep_genN.M(), weight);
     hist("M_WLep_gen")->Fill(WLep_gen.M(), weight);
     if(WLep_gen.M()<50) hist("MT_WLep_offshell")->Fill(MT_WLep, weight);
     if(WLep_gen.M()>70 && WLep_gen.M()<90) hist("MT_WLep_onshell")->Fill(MT_WLep, weight);
@@ -414,9 +422,7 @@ void HHtoWWbbSemiLeptonicMatchedHists::fill(const Event & event) {
       // chi2 matching
       int B1_id_chi2 = event.get(h_b1_index);
       int B2_id_chi2 = event.get(h_b2_index);
-      cout << "Line: " << __LINE__ << endl;
       fillJetIdMatching(B1_id_chi2, B1_id_true, B2_id_true, b1_correct_chi2, weight);
-      cout << "Line: " << __LINE__ << endl;
 
       fillJetIdMatching(B2_id_chi2, B1_id_true, B2_id_true, b2_correct_chi2, weight);
       fillJetIdMatching2p(B1_id_chi2, B2_id_chi2, B1_id_true, B2_id_true, Hbb_correct_chi2, weight);
@@ -433,21 +439,39 @@ void HHtoWWbbSemiLeptonicMatchedHists::fill(const Event & event) {
 
       int B1_id_highestPt=0;
       int B2_id_highestPt=0;
+
       JetId DeepjetMedium = BTag(BTag::DEEPJET, BTag::WP_MEDIUM);
       int Ndeepjet_med=0;
+      vector<int> lightjet_ids;
+      
       for (unsigned int i =0; i<event.jets->size(); i++) {
 	if(DeepjetMedium(event.jets->at(i),event)) {
 	  Ndeepjet_med++;
 	  if(Ndeepjet_med == 1) B1_id_highestPt = i+1;
 	  if(Ndeepjet_med == 2) B2_id_highestPt = i+1;
 	}
-	// else.... lightjets
+	else {
+	  lightjet_ids.push_back(i+1);
+	}
       }
+
+      int Q1_id_highestPt=lightjet_ids[0];
+      int Q2_id_highestPt=lightjet_ids[1];
+      int Q1_id_lowestPt=lightjet_ids[lightjet_ids.size()-2];
+      int Q2_id_lowestPt=lightjet_ids[lightjet_ids.size()-1];
 
     
       fillJetIdMatching(B1_id_highestPt, B1_id_true, B2_id_true, b1_correct_highestPt, weight);
       fillJetIdMatching(B2_id_highestPt, B1_id_true, B2_id_true, b2_correct_highestPt, weight);
       fillJetIdMatching2p(B1_id_highestPt, B2_id_highestPt, B1_id_true, B2_id_true, Hbb_correct_highestPt, weight);
+
+      fillJetIdMatching(Q1_id_highestPt, Q1_id_true, Q2_id_true, q1_correct_highestPt, weight);
+      fillJetIdMatching(Q2_id_highestPt, Q1_id_true, Q2_id_true, q2_correct_highestPt, weight);
+      fillJetIdMatching2p(Q1_id_highestPt, Q2_id_highestPt, Q1_id_true, Q2_id_true, WHad_correct_highestPt, weight);
+      fillJetIdMatching(Q1_id_lowestPt, Q1_id_true, Q2_id_true, q1_correct_lowestPt, weight);
+      fillJetIdMatching(Q2_id_lowestPt, Q1_id_true, Q2_id_true, q2_correct_lowestPt, weight);
+      fillJetIdMatching2p(Q1_id_lowestPt, Q2_id_lowestPt, Q1_id_true, Q2_id_true, WHad_correct_lowestPt, weight);
+
     }
 
 }
