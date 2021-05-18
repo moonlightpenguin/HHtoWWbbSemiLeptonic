@@ -13,20 +13,6 @@
 
 
 <!ENTITY HHtoWWbbSemiLeptonic_SM SYSTEM "/nfs/dust/cms/user/frahmmat/CMSSW_10_2_X_v2/CMSSW_10_2_17/src/UHH2/common/UHH2-datasets/RunII_102X_v2/2016v3/HHtoWWbbSemiLeptonic/GluGluToHHTo2B2WToLNu2J_node_SM_TuneCUETP8M1_PSWeights_13TeV-madgra_Summer16_v1.xml">
-<!ENTITY HHtoWWbbSemiLeptonic_1 SYSTEM "/nfs/dust/cms/user/frahmmat/CMSSW_10_2_X_v2/CMSSW_10_2_17/src/UHH2/common/UHH2-datasets/RunII_102X_v2/2016v3/HHtoWWbbSemiLeptonic/GluGluToHHTo2B2WToLNu2J_node_1_TuneCUETP8M1_PSWeights_13TeV-madgra_Summer16_v1.xml">
-<!ENTITY HHtoWWbbSemiLeptonic_2 SYSTEM "/nfs/dust/cms/user/frahmmat/CMSSW_10_2_X_v2/CMSSW_10_2_17/src/UHH2/common/UHH2-datasets/RunII_102X_v2/2016v3/HHtoWWbbSemiLeptonic/GluGluToHHTo2B2WToLNu2J_node_2_TuneCUETP8M1_PSWeights_13TeV-madgra_Summer16_v1.xml">
-<!ENTITY HHtoWWbbSemiLeptonic_3 SYSTEM "/nfs/dust/cms/user/frahmmat/CMSSW_10_2_X_v2/CMSSW_10_2_17/src/UHH2/common/UHH2-datasets/RunII_102X_v2/2016v3/HHtoWWbbSemiLeptonic/GluGluToHHTo2B2WToLNu2J_node_3_TuneCUETP8M1_PSWeights_13TeV-madgra_Summer16_v1.xml">
-<!ENTITY HHtoWWbbSemiLeptonic_4 SYSTEM "/nfs/dust/cms/user/frahmmat/CMSSW_10_2_X_v2/CMSSW_10_2_17/src/UHH2/common/UHH2-datasets/RunII_102X_v2/2016v3/HHtoWWbbSemiLeptonic/GluGluToHHTo2B2WToLNu2J_node_4_TuneCUETP8M1_PSWeights_13TeV-madgra_Summer16_v1.xml">
-<!ENTITY HHtoWWbbSemiLeptonic_5 SYSTEM "/nfs/dust/cms/user/frahmmat/CMSSW_10_2_X_v2/CMSSW_10_2_17/src/UHH2/common/UHH2-datasets/RunII_102X_v2/2016v3/HHtoWWbbSemiLeptonic/GluGluToHHTo2B2WToLNu2J_node_5_TuneCUETP8M1_PSWeights_13TeV-madgra_Summer16_v1.xml">
-<!ENTITY HHtoWWbbSemiLeptonic_6 SYSTEM "/nfs/dust/cms/user/frahmmat/CMSSW_10_2_X_v2/CMSSW_10_2_17/src/UHH2/common/UHH2-datasets/RunII_102X_v2/2016v3/HHtoWWbbSemiLeptonic/GluGluToHHTo2B2WToLNu2J_node_6_TuneCUETP8M1_PSWeights_13TeV-madgra_Summer16_v1.xml">
-<!ENTITY HHtoWWbbSemiLeptonic_7 SYSTEM "/nfs/dust/cms/user/frahmmat/CMSSW_10_2_X_v2/CMSSW_10_2_17/src/UHH2/common/UHH2-datasets/RunII_102X_v2/2016v3/HHtoWWbbSemiLeptonic/GluGluToHHTo2B2WToLNu2J_node_7_TuneCUETP8M1_PSWeights_13TeV-madgra_Summer16_v1.xml">
-<!ENTITY HHtoWWbbSemiLeptonic_8 SYSTEM "/nfs/dust/cms/user/frahmmat/CMSSW_10_2_X_v2/CMSSW_10_2_17/src/UHH2/common/UHH2-datasets/RunII_102X_v2/2016v3/HHtoWWbbSemiLeptonic/GluGluToHHTo2B2WToLNu2J_node_8_TuneCUETP8M1_PSWeights_13TeV-madgra_Summer16_v1.xml">
-<!ENTITY HHtoWWbbSemiLeptonic_9 SYSTEM "/nfs/dust/cms/user/frahmmat/CMSSW_10_2_X_v2/CMSSW_10_2_17/src/UHH2/common/UHH2-datasets/RunII_102X_v2/2016v3/HHtoWWbbSemiLeptonic/GluGluToHHTo2B2WToLNu2J_node_9_TuneCUETP8M1_PSWeights_13TeV-madgra_Summer16_v1.xml">
-<!ENTITY HHtoWWbbSemiLeptonic_10 SYSTEM "/nfs/dust/cms/user/frahmmat/CMSSW_10_2_X_v2/CMSSW_10_2_17/src/UHH2/common/UHH2-datasets/RunII_102X_v2/2016v3/HHtoWWbbSemiLeptonic/GluGluToHHTo2B2WToLNu2J_node_10_TuneCUETP8M1_PSWeights_13TeV-madgra_Summer16_v10.xml">
-<!ENTITY HHtoWWbbSemiLeptonic_11 SYSTEM "/nfs/dust/cms/user/frahmmat/CMSSW_10_2_X_v2/CMSSW_10_2_17/src/UHH2/common/UHH2-datasets/RunII_102X_v2/2016v3/HHtoWWbbSemiLeptonic/GluGluToHHTo2B2WToLNu2J_node_11_TuneCUETP8M1_PSWeights_13TeV-madgra_Summer16_v1.xml">
-<!ENTITY HHtoWWbbSemiLeptonic_12 SYSTEM "/nfs/dust/cms/user/frahmmat/CMSSW_10_2_X_v2/CMSSW_10_2_17/src/UHH2/common/UHH2-datasets/RunII_102X_v2/2016v3/HHtoWWbbSemiLeptonic/GluGluToHHTo2B2WToLNu2J_node_12_TuneCUETP8M1_PSWeights_13TeV-madgra_Summer16_v1.xml">
-
-
 
 
 
@@ -311,7 +297,7 @@
 
 
 
-<!-- SIGNAL (check lumi with Matthias) -->
+<!-- SIGNAL  -->
 
 
 

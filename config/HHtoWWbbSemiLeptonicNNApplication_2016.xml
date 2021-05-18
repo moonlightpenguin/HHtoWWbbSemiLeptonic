@@ -130,7 +130,7 @@
 
 <!--
 <ConfigParse NEventsBreak="150000" FileSplit="0" AutoResubmit="5"/>
-<ConfigSGE RAM="2" DISK="1" Mail="mathis.frahm@desy.de" Notification="as" Workdir="workdir_Full_2016"/>
+<ConfigSGE RAM="2" DISK="1" Mail="mathis.frahm@desy.de" Notification="as" Workdir="workdir_NNApply_2016"/>
 -->
 
 
@@ -290,7 +290,7 @@
 
 
 
-<!-- SIGNAL -->
+<!-- SIGNAL (check lumi with Matthias) -->
 
 <!-- Lumi="9661706.924" before HHtoWWbbSemiLeptonic BR -->
 
@@ -769,7 +769,7 @@
 -->
 
 <!-- the class name of the AnalysisModule subclasses to run: -->
-<Item Name="AnalysisModule" Value="HHtoWWbbSemiLeptonicFullselectionModule" />
+<Item Name="AnalysisModule" Value="HHtoWWbbSemiLeptonicNNApplication" />
 
 <!-- tell AnalysisModuleRunner NOT to use the MC event weight from SFrame; rather let
 MCLumiWeight (called via CommonModules) calculate the MC event weight. The MC
@@ -812,7 +812,7 @@ event weight assigned by MCLumiWeight is InputData.Lumi / Cycle.TargetLumi. -->
 <Item Name="jersmear_direction" Value="nominal" />
 
 
-<!-- Some test configuration; see HHtoWWbbSemiLeptonicFullselectionModule.cxx for how to access it: -->
+<!-- Some test configuration; see HHtoWWbbSemiLeptonicNNApplication.cxx for how to access it: -->
 <Item Name="TestKey" Value="TestKeyValue" />
 </UserConfig>
 </Cycle>
