@@ -17,32 +17,27 @@
 using namespace std;
 using namespace uhh2;
 
-HHCategorizeJets::HHCategorizeJets(uhh2::Context& ctx){
-  h_jetCategories = ctx.declare_event_output<HHJetCategories>("jetCategories");
-}
-
-
 // only safe for 4 Jet category
-bool HHCategorizeJets::process(uhh2::Event& event){
-  HHJetCategories output;
+JetCategories CategorizeJets(uhh2::Event& event){
+  JetCategories output;
 
   std::vector<Jet>* jets = event.jets;
   JetId DeepjetMedium = BTag(BTag::DEEPJET, BTag::WP_MEDIUM);
   vector<Jet> lightjets;
-
+  output.NJets = jets->size();
   // assign bjets
   int Ndeepjet_med=0;
   for (unsigned int i =0; i<jets->size(); i++) {
     if(DeepjetMedium(jets->at(i),event)) {
       Ndeepjet_med++;
-      if(Ndeepjet_med == 1) output.b1 =jets->at(i);
-      if(Ndeepjet_med == 2) output.b2 =jets->at(i);
+      if(Ndeepjet_med == 1) output.b1 =jets->at(i).v4();
+      if(Ndeepjet_med == 2) output.b2 =jets->at(i).v4();
       // define all other bjets as lightjets
       if(Ndeepjet_med > 2) lightjets.push_back(jets->at(i));
     }
     else lightjets.push_back(jets->at(i));
   }
-  
+  output.NBJets = Ndeepjet_med;
   // if only 1 btagged jet -> take lightjet with highest btag-score as b2
   unsigned int b2_index = 999;
   if(Ndeepjet_med == 1) {
@@ -51,22 +46,19 @@ bool HHCategorizeJets::process(uhh2::Event& event){
     for (unsigned int j=0; j<lightjets.size(); j++) {
       if(lightjets[j].btag_DeepJet() > btag_max) b2_index = j;
     }
-    
   }
   // assign lightsjets and (possibly) b2
   int Nlightjet=0;
   for (unsigned int j=0; j<lightjets.size(); j++) {
-    if(j==b2_index) output.b2 = lightjets[j];
+    if(j==b2_index) output.b2 = lightjets[j].v4();
     else{
       Nlightjet++;
-      if(Nlightjet==1) output.q1 = lightjets[j];
-      if(Nlightjet==2) output.q2 = lightjets[j];
+      if(Nlightjet==1) output.q1 = lightjets[j].v4();
+      if(Nlightjet==2) output.q2 = lightjets[j].v4();
     }
   }
-  event.set(h_jetCategories, output);
-  return true;
+  return output;
 }
-
 
 Variables_NN::Variables_NN(uhh2::Context& ctx){
 
@@ -83,15 +75,23 @@ Variables_NN::Variables_NN(uhh2::Context& ctx){
   // high-level observables
 
   h_mbb = ctx.declare_event_output<float> ("mbb");
+  h_mWW = ctx.declare_event_output<float> ("mWW");
   h_mlnu = ctx.declare_event_output<float> ("mlnu");
+  h_mqq = ctx.declare_event_output<float> ("mqq");
   h_DeltaRlnu = ctx.declare_event_output<float> ("DeltaRlnu");
   h_DeltaRbb = ctx.declare_event_output<float> ("DeltaRbb");
+  h_DeltaRqq = ctx.declare_event_output<float> ("DeltaRqq");
   h_minDeltaRlj = ctx.declare_event_output<float> ("minDeltaRlj");
   h_minDeltaRbj = ctx.declare_event_output<float> ("minDeltaRbj");
   h_minDeltaRjj = ctx.declare_event_output<float> ("minDeltaRjj");
   h_HT = ctx.declare_event_output<float> ("HT");
   h_N_BTag = ctx.declare_event_output<float> ("N_BTag");
   h_N_Ak4 = ctx.declare_event_output<float> ("N_Ak4");
+
+  h_mtop_lep_hyp1 = ctx.declare_event_output<float> ("mtop_lep_hyp1");
+  h_mtop_lep_hyp2 = ctx.declare_event_output<float> ("mtop_lep_hyp2");
+  h_mtop_had_hyp1 = ctx.declare_event_output<float> ("mtop_had_hyp1");
+  h_mtop_had_hyp2 = ctx.declare_event_output<float> ("mtop_had_hyp2");
 
 
 ///  Higgs masses (chi2)
@@ -365,32 +365,53 @@ bool Variables_NN::process(uhh2::Event& evt){
 
   evt.set(h_mbb, -10);
   evt.set(h_mlnu, -10);
+  evt.set(h_mqq, -10);
   evt.set(h_DeltaRlnu, -10);
   evt.set(h_DeltaRbb, -10);
+  evt.set(h_DeltaRqq, -10);
   evt.set(h_minDeltaRlj, -10);
   evt.set(h_minDeltaRbj, -10);
   evt.set(h_minDeltaRjj, -10);
   evt.set(h_HT, -10);
   evt.set(h_N_BTag, -10);
+  evt.set(h_mtop_lep_hyp1, -10);
+  evt.set(h_mtop_lep_hyp2, -10);
+  evt.set(h_mtop_had_hyp1, -10);
+  evt.set(h_mtop_had_hyp2, -10);
 
-
-  //Jet & j = Ak4jets->at(0);
-  // double dR = deltaR(j, lepton);
-
-  //double dR = minDeltaR(Ak4jets, lepton);
-  //evt.set(h_minDeltaRlj, minDeltaR(Ak4jets, lepton));
+  JetCategories jc = CategorizeJets(evt);
   
-  /*
-  for(unsigned int i =0; i<Ak4jets->size(); i++) {
-    if(DeepjetMedium(jets->at(i),event)) {
-      //bjets->push_back(jets->at(i));
-      Ndeepjet_med++;
-      if(Ndeepjet_med == 1) b1 =jets->at(i);
-      if(Ndeepjet_med == 2) b2 =jets->at(i);
-    }
+  evt.set(h_mbb, (jc.b1+jc.b2).M());
+  evt.set(h_mWW, TransverseMass4particles(jc.q1,jc.q2, lepton, evt.met->v4()));
+  //evt.set(h_mlnu, (lepton+evt.met->v4()).M());
+  evt.set(h_mlnu, TransverseMass(lepton, evt.met->v4(), 0, 0));
+  evt.set(h_mqq, (jc.q1+jc.q2).M());
+  evt.set(h_DeltaRlnu, deltaR(lepton, evt.met->v4()));
+  evt.set(h_DeltaRbb, deltaR(jc.b1, jc.b2));
+  evt.set(h_DeltaRqq, deltaR(jc.q1, jc.q2));
+  
+  double HT=0;
+  for(const Jet j : *Ak4jets) HT+= j.pt();
+  evt.set(h_HT, HT);
+  evt.set(h_N_BTag, jc.NBJets);
+  // Top Mass
 
-  }
-  */
+  LorentzVector b1, b2;
+  // lep_hyp1 if deltaR(lep,b) is minimal
+  if(deltaR(lepton, jc.b1)<deltaR(lepton, jc.b2)) {b1 = jc.b1; b2 = jc.b2;}
+  else {b2 = jc.b1; b1 = jc.b2;}
+  
+  double mtop_lep1 = (lepton+evt.met->v4()+b1).M(); // transverse mass?
+  double mtop_lep2 = (lepton+evt.met->v4()+b2).M(); // transverse mass?
+  double mtop_had1 = (jc.q1+jc.q2+b2).M();
+  double mtop_had2 = (jc.q1+jc.q2+b1).M();
+
+  evt.set(h_mtop_lep_hyp1, mtop_lep1);
+  evt.set(h_mtop_lep_hyp2, mtop_lep2);
+  evt.set(h_mtop_had_hyp1, mtop_had1);
+  evt.set(h_mtop_had_hyp2, mtop_had2);
+
+
   // Higgs mass
   evt.set(h_MH_bb, -10);
   evt.set(h_MH_WW, -10);

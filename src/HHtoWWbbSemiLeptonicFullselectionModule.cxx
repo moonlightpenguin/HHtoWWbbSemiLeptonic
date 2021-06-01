@@ -32,7 +32,7 @@
 #include "UHH2/HHtoWWbbSemiLeptonic/include/HHtoWWbbSemiLeptonicMatchedHists.h"
 
 
-//#include "UHH2/HHtoWWbbSemiLeptonic/include/HHtoWWbbSemiLeptonicModules.h"
+#include "UHH2/HHtoWWbbSemiLeptonic/include/HHtoWWbbSemiLeptonicModules.h"
 //#include "UHH2/HHtoWWbbSemiLeptonic/include/HHtoWWbbSemiLeptonicPDFHists.h"
 #include "UHH2/HHtoWWbbSemiLeptonic/include/HHGenObjects.h"
 #include "UHH2/HHtoWWbbSemiLeptonic/include/HHGenRecoMatching.h"
@@ -40,7 +40,7 @@
 #include "UHH2/HHtoWWbbSemiLeptonic/include/HHMassReconstruction.h"
 #include "UHH2/HHtoWWbbSemiLeptonic/include/HHReconstructionHypothesis.h"
 #include "UHH2/HHtoWWbbSemiLeptonic/include/HHReconstructionHypothesisDiscriminators.h"
-#include "UHH2/LQTopLep/include/LQTopLepModules.h" // for trigger SF's
+//#include "UHH2/LQTopLep/include/LQTopLepModules.h" // for trigger SF's
 
 #include <UHH2/HHtoWWbbSemiLeptonic/include/ModuleBASE.h>
 
@@ -65,7 +65,7 @@ namespace uhh2examples {
 
     unique_ptr<Hists> h_btageff;
     std::unique_ptr<AnalysisModule> SF_muonIso, SF_muonID, SF_muonTrigger, SF_eleReco, SF_eleID, SF_eleTrigger, SF_btag;
-    std::unique_ptr<Selection> nbtag1_medium_sel, nbtag2_medium_sel, muon_trigger_sel1, muon_trigger_sel2, ele_trigger_sel1, ele_trigger_sel2, ele_trigger_sel3;
+    std::unique_ptr<Selection> nbtag1_medium_sel, nbtag2_medium_sel, njet4_sel, muon_trigger_sel1, muon_trigger_sel2, ele_trigger_sel1, ele_trigger_sel2, ele_trigger_sel3;
     
 
     unique_ptr<HHtoWWbbMassReconstruction> mHH_reco;
@@ -78,6 +78,9 @@ namespace uhh2examples {
     unique_ptr<uhh2::AnalysisModule> HHgenrecoprod;
     uhh2::Event::Handle<HHGenRecoMatching> h_HHgenreco;
 
+
+    // NN variables
+    unique_ptr<Variables_NN> Variables_module;
 
 
     // mass reco stuff
@@ -291,11 +294,12 @@ namespace uhh2examples {
     // Selections
     nbtag1_medium_sel.reset(new NJetSelection(1, -1, DeepjetMedium));
     nbtag2_medium_sel.reset(new NJetSelection(2, -1, DeepjetMedium));
+    njet4_sel.reset(new NJetSelection(4, -1));
 
-
+    Variables_module.reset(new Variables_NN(ctx));
 
     // Book histograms
-    vector<string> histogram_tags = {"Cleaner", "Trigger", "TriggerSF", "BTag", "Finalselection_mHH_reconstructed"};
+    vector<string> histogram_tags = {"Cleaner", "Trigger", "TriggerSF", "BTag", "mHH_reconstructed"};
     book_histograms(ctx, histogram_tags);
 
     h_btageff.reset(new BTagMCEfficiencyHists(ctx, "BTagEff", DeepjetMedium));
@@ -306,7 +310,7 @@ namespace uhh2examples {
     // cout << "Fullselection: process" << endl;
     // cout << "FullselectionModule Line: " << __LINE__ << endl;
 
-    cout << "dataset_version: "<< dataset_version << endl;
+    // cout << "dataset_version: "<< dataset_version << endl;
     if (is_signal){
       HHgenprod->process(event);
       HHgenrecoprod->process(event);
@@ -327,12 +331,10 @@ namespace uhh2examples {
     else throw runtime_error("In HHtoWWbbSemiLeptonicFullSelectionModule: region is neither srmu or srele");
     
 
-    //cout << "test: "<< event.get(h_mHH) << endl;
-
     mHH_reco->process(event);    
-    //cout << "mHH reconstructed? " << event.get(h_is_mHH_reconstructed) << endl;
     chi2_module->process(event);
 
+    Variables_module->process(event);
     bool pass_common = common->process(event);
     if(!pass_common) return false;
 
@@ -356,7 +358,7 @@ namespace uhh2examples {
       // Muon regions
       if(!(muon_trigger_sel1->passes(event) || muon_trigger_sel2->passes(event))) return false;
 
-      cout << "dataset_version: " << dataset_version << endl;
+      //cout << "dataset_version: " << dataset_version << endl;
       // Reject electron and photon data
       if(!is_mc && !dataset_version.Contains("Muon")) return false;
     }
@@ -411,7 +413,7 @@ namespace uhh2examples {
 
     if(!nbtag1_medium_sel->passes(event)) return false; // comment out when re-doing SF_btag
     fill_histograms(event,"BTag", region);
-    if(!nbtag2_medium_sel->passes(event)) return false;
+    //if(!nbtag2_medium_sel->passes(event)) return false;
 
     // cout << "mH_bb: " << event.get(h_mH_bb) << endl;
     // cout << "Chi2_H_bb: " << event.get(h_chi2_H_bb) << endl;
@@ -420,6 +422,10 @@ namespace uhh2examples {
     // cout << "is_mHH_reconstructed: " << is_mHH_reconstructed << endl;
     if(is_mHH_reconstructed) fill_histograms(event, "Finalselection_mHH_reconstructed", region);
 
+    // DNN: for now only in srmu; should be done seperately for ech and much at some point
+    
+    if(leptonregion != "muon") return false; // quick hack to only consider muons in DNN
+    if(!njet4_sel->passes(event)) return false; // quick hack to only consider 4 Jet category
     event.set(h_eventweight_final, event.weight);
     event.set(h_region, region);
     return true;

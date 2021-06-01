@@ -20,12 +20,17 @@ HHtoWWbbSemiLeptonicMulticlassNNHists::HHtoWWbbSemiLeptonicMulticlassNNHists(uhh
 
 void HHtoWWbbSemiLeptonicMulticlassNNHists::init(){
 
-NN_out0 = book<TH1F>("NN_out0", "NN output 0", 100, 0, 1);
-NN_out1 = book<TH1F>("NN_out1", "NN output 1", 100, 0, 1);
-NN_out2 = book<TH1F>("NN_out2", "NN output 2", 100, 0, 1);
-NN_out3 = book<TH1F>("NN_out3", "NN output 3", 100, 0, 1);
-NN_out4 = book<TH1F>("NN_out4", "NN output 4", 100, 0, 1);
+NN_out0 = book<TH1F>("NN_out0", "NN output 0", 40, 0, 1);
+NN_out1 = book<TH1F>("NN_out1", "NN output 1", 40, 0, 1);
+NN_out2 = book<TH1F>("NN_out2", "NN output 2", 40, 0, 1);
+NN_out3 = book<TH1F>("NN_out3", "NN output 3", 40, 0, 1);
+NN_out4 = book<TH1F>("NN_out4", "NN output 4", 40, 0, 1);
 
+NN_out0_rebin = book<TH1F>("NN_out0_rebin", "NN output 0", 10, 0, 1);
+NN_out1_rebin = book<TH1F>("NN_out1_rebin", "NN output 1", 10, 0, 1);
+NN_out2_rebin = book<TH1F>("NN_out2_rebin", "NN output 2", 10, 0, 1);
+NN_out3_rebin = book<TH1F>("NN_out3_rebin", "NN output 3", 10, 0, 1);
+NN_out4_rebin = book<TH1F>("NN_out4_rebin", "NN output 4", 10, 0, 1);
 }
 
 void HHtoWWbbSemiLeptonicMulticlassNNHists::fill(const Event & event){
@@ -43,6 +48,11 @@ NN_out2->Fill(NNoutput2, weight);
 NN_out3->Fill(NNoutput3, weight);
 NN_out4->Fill(NNoutput4, weight);
 
+NN_out0_rebin->Fill(NNoutput0, weight);
+NN_out1_rebin->Fill(NNoutput1, weight);
+NN_out2_rebin->Fill(NNoutput2, weight);
+NN_out3_rebin->Fill(NNoutput3, weight);
+NN_out4_rebin->Fill(NNoutput4, weight);
 }
 
 HHtoWWbbSemiLeptonicMulticlassNNHists::~HHtoWWbbSemiLeptonicMulticlassNNHists(){}
@@ -128,6 +138,9 @@ void HHtoWWbbSemiLeptonicMulticlassNNInputHists::init(){
   NN_mtop_had1 = book<TH1F>("NN_mtop_had1", "NN_mtop_had1", 40,0,400);
   NN_mtop_had2 = book<TH1F>("NN_mtop_had2", "NN_mtop_had2", 40,0,400);
 
+  NN_MH_bb = book<TH1F>("NN_MH_bb", "NN_MH_bb", 40,0,400);
+  NN_MH_WW = book<TH1F>("NN_MH_WW", "NN_MH_WW", 40,0,400);
+
   //low-level
   NN_Lep_pt = book<TH1F>("NN_Lep_pt", "NN_Lep_pt", 40, 0, 400);
   NN_Lep_eta = book<TH1F>("NN_Lep_eta", "NN_Lep_eta", 40, -2.5, 2.5);
@@ -178,6 +191,9 @@ void HHtoWWbbSemiLeptonicMulticlassNNInputHists::fill(const Event & event){
   NN_mtop_lep2->Fill(event.get(h_mtop_lep_hyp2), weight);
   NN_mtop_had1->Fill(event.get(h_mtop_had_hyp1), weight);
   NN_mtop_had2->Fill(event.get(h_mtop_had_hyp2), weight);
+
+  NN_MH_bb->Fill(event.get(h_MH_bb), weight);
+  NN_MH_WW->Fill(event.get(h_MH_WW), weight);
   
   //low-level
   NN_Lep_pt->Fill(event.get(h_Lep_pt), weight);
