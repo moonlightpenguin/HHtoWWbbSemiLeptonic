@@ -23,27 +23,21 @@
 
 using namespace std;
 
-void AnalysisTool::ProduceCombineHistograms(){
+void AnalysisTool::ProduceCombineHistogramsNN(){
   cout << "ProduceCombinedHistograms:"<< endl;
   cout << "year: " << AnalysisTool::yeartag << endl;
+  cout << "Line: " << __LINE__ << endl;
 
-  
 
-    /*
-      limits: chi2,chi2
-      limits1: highPt,chi2
-      limits2: highPt,highPt
-      limits3: highPt,lowPt
-    */
   vector<TString> systematics = {"NOMINAL"};
   vector<TString> region_tags = {"catA"};
   vector<TString> channel_tags = {"srmu", "srele"};
   //vector<TString> channel_tags = {"srmu"};
-  vector<TString> histinname_base = {"Mbb_vs_MWW_limits2"};
+  vector<TString> histinname_base = {"NN_out0"};
   vector<TString> histoutname_base = {"mH"};
   vector<TString> samples_base = {"HHtoWWbbSemiLeptonic_SM", "SingleTop", "TTbar", "DYJets", "Diboson", "QCD", "TTV", "WJets", "DATA"};
 
-  TString outfilename = AnalysisTool::combine_path + "input/combine_histograms_" + AnalysisTool::year + ".root"; 
+  TString outfilename = AnalysisTool::combine_path + "input/NN_combine_histograms_" + AnalysisTool::year + ".root"; 
   TFile* f_out = new TFile(outfilename, "RECREATE");
 
   /*
@@ -76,31 +70,16 @@ void AnalysisTool::ProduceCombineHistograms(){
 	  cout << "======= Sample " << proc << endl;
 	  TString tag = "MC.";
 	  if(proc.Contains("DATA")) tag ="DATA.";
-	  TString infilename = infilename_base + tag + proc + "_" + yeartag + ".root";
+	  TString infilename = infilename_base + tag + proc + "_" + yeartag + ".root";	  
+
 	  TFile* f_in = new TFile(infilename);
-	  TString histname = "mHH_reconstructed_" + channel_tags[channel] + "_General/" + histinname_base[region];  
-	  TH2F* h_in = (TH2F*) f_in->Get(histname); // unroll
+	  //TString histname = "Finalselection_mHH_reconstructed_" + channel_tags[channel] + "_General/" + histinname_base[region];  
+	  TString histname = "MulticlassNN/" + histinname_base[region];
 
-	  TH1F* h_out = new TH1F("h_out", histoutname_base[region], (h_in->GetNbinsX()+2)*(h_in->GetNbinsY()+2), -0.5, (h_in->GetNbinsX()+2)*(h_in->GetNbinsY()+2)+0.5);
-	  for(int a=0; a<h_in->GetNbinsX()+2; a++) {
-	    cout << " >>>>>>>>>>>>>>  a=" << a << endl;
-	    for(int b=0; b<h_in->GetNbinsY()+2; b++) {
-	      cout << " >>>>>>>>  b=" << b << endl;
-	      int bin = h_in->GetBin(a,b);
-	      
-	      cout << "bin: " << bin << endl;
-	      //cout << "true bin: " << bin-13-2*b << endl;
-	      cout << "content: " << h_in->GetBinContent(bin) << endl;
-	      
-	      h_out->SetBinContent(bin, h_in->GetBinContent(bin));
-	      //h_out->SetBinContent(bin-13-2*b, h_in->GetBinContent(bin));
-
-	    }
-	  }
-	  // unrolling done
+	  TH1F* h_out = (TH1F*) f_in->Get(histname);
 
 	  //if(proc.Contains("HHtoWWbb")) h_out->Scale(10.);
-	  //h_out->Scale(3.8);
+	  h_out->Scale(3.8);
 
 	  // change data and qcd to the required output name
 	  if(proc.Contains("DATA")) proc = "data_obs";
