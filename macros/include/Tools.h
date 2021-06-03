@@ -24,7 +24,7 @@ public:
   void SignalToBackground(TString cuts, TString plotname);
 
   void ProduceCombineHistograms();
-
+  void ProduceCombineHistogramsNN();
 
 private:
   TString base_path, pre_tag, full_tag, uhh2_path, combine_path;

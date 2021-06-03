@@ -13,7 +13,7 @@ systematics = ['lumi']
 backgrounds = ['TTbar', 'DYJets', 'SingleTop', 'TTV', 'Diboson', 'WJets', 'QCD']
 
 categories = ['A']
-channels = ['srmu', 'srele']
+channels = ['srmu']
 
 #masspoints = [200, 300, 400, 500, 600, 700, 800, 900, 1000, 1200, 1400, 1700, 2000]
 nodes = ['SM']

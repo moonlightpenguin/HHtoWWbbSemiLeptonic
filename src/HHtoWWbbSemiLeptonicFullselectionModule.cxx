@@ -30,6 +30,7 @@
 #include "UHH2/HHtoWWbbSemiLeptonic/include/HHtoWWbbSemiLeptonicHists.h"
 #include "UHH2/HHtoWWbbSemiLeptonic/include/HHtoWWbbSemiLeptonicGenHists.h"
 #include "UHH2/HHtoWWbbSemiLeptonic/include/HHtoWWbbSemiLeptonicMatchedHists.h"
+#include "UHH2/HHtoWWbbSemiLeptonic/include/HHtoWWbbSemiLeptonicMulticlassNNHists.h"
 
 
 #include "UHH2/HHtoWWbbSemiLeptonic/include/HHtoWWbbSemiLeptonicModules.h"
@@ -63,7 +64,7 @@ namespace uhh2examples {
 
     std::unique_ptr<CommonModules> common;
 
-    unique_ptr<Hists> h_btageff;
+    unique_ptr<Hists> h_btageff, h_NNInputVariables;
     std::unique_ptr<AnalysisModule> SF_muonIso, SF_muonID, SF_muonTrigger, SF_eleReco, SF_eleID, SF_eleTrigger, SF_btag;
     std::unique_ptr<Selection> nbtag1_medium_sel, nbtag2_medium_sel, njet4_sel, muon_trigger_sel1, muon_trigger_sel2, ele_trigger_sel1, ele_trigger_sel2, ele_trigger_sel3;
     
@@ -303,6 +304,7 @@ namespace uhh2examples {
     book_histograms(ctx, histogram_tags);
 
     h_btageff.reset(new BTagMCEfficiencyHists(ctx, "BTagEff", DeepjetMedium));
+    h_NNInputVariables.reset(new HHtoWWbbSemiLeptonicMulticlassNNInputHists(ctx, "NNInputVariables"));
   }
 
 
@@ -334,7 +336,6 @@ namespace uhh2examples {
     mHH_reco->process(event);    
     chi2_module->process(event);
 
-    Variables_module->process(event);
     bool pass_common = common->process(event);
     if(!pass_common) return false;
 
@@ -420,12 +421,14 @@ namespace uhh2examples {
 
     bool is_mHH_reconstructed = event.get(h_is_mHH_reconstructed);
     // cout << "is_mHH_reconstructed: " << is_mHH_reconstructed << endl;
-    if(is_mHH_reconstructed) fill_histograms(event, "Finalselection_mHH_reconstructed", region);
+    if(is_mHH_reconstructed) fill_histograms(event, "mHH_reconstructed", region);
 
     // DNN: for now only in srmu; should be done seperately for ech and much at some point
     
     if(leptonregion != "muon") return false; // quick hack to only consider muons in DNN
     if(!njet4_sel->passes(event)) return false; // quick hack to only consider 4 Jet category
+    Variables_module->process(event);
+    h_NNInputVariables->fill(event);
     event.set(h_eventweight_final, event.weight);
     event.set(h_region, region);
     return true;

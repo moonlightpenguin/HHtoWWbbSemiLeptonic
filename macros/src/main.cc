@@ -43,6 +43,8 @@ int main(){
 
 
   Analysis16.ProduceCombineHistograms();
+  Analysis16.ProduceCombineHistogramsNN();
+
 
 
   cout << "Finished main(). cya." << endl;

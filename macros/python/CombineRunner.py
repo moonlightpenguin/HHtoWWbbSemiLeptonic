@@ -69,7 +69,7 @@ class CombineRunner:
             diagnostics = ['combine', '-M', 'FitDiagnostics', '-t', '-1', '--rMin', '-200', '--rMax', '200', '--expectSignal', '2', '--saveShapes', '--cminDefaultMinimizerTolerance', '1e-2', '--cminDefaultMinimizerStrategy', '0', combcard]
             #diagnostics = ['combine', '-M', 'FitDiagnostics', '-t', '-1', '--rMin', '-20', '--rMax', '20', '--saveShapes', '--cminDefaultMinimizerTolerance', '1e-2', '--cminDefaultMinimizerStrategy', '0', combcard]
 
-            processes.append(subprocess.Popen(diagnostics))
+            #processes.append(subprocess.Popen(diagnostics))
             processes.append(subprocess.Popen(command))
 
 
