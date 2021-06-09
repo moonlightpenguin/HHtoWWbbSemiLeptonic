@@ -150,7 +150,7 @@ void NeuralNetworkModule::CreateInputs(Event & event) {
   string std[N_variables];
   double mean_val[N_variables];
   double std_val[N_variables];
-  ifstream normfile ("/nfs/dust/cms/user/frahmmat/CMSSW_10_2_X_v2/CMSSW_10_2_17/src/UHH2/HHtoWWbbSemiLeptonic/data/NNModel/4classes/NormInfo.txt", ios::in);
+  ifstream normfile ("/nfs/dust/cms/user/frahmmat/CMSSW_10_2_X_v2/CMSSW_10_2_17/src/UHH2/HHtoWWbbSemiLeptonic/data/NNModel/3classes/NormInfo.txt", ios::in);
   if (normfile.is_open()) { 
     for(int i = 0; i < N_variables; ++i) {   
       normfile >> varname[i] >> scal[i] >> mean[i] >> std[i];
@@ -218,7 +218,6 @@ private:
 
 };
 
-
 void HHtoWWbbSemiLeptonicNNApplication::book_histograms(uhh2::Context& ctx, vector<string> tags){
   for(const auto & tag : tags){
     cout << "booking histograms with tag " << tag << endl;
@@ -226,6 +225,11 @@ void HHtoWWbbSemiLeptonicNNApplication::book_histograms(uhh2::Context& ctx, vect
     //book_HFolder(mytag, new HHtoWWbbSemiLeptonicHists(ctx,mytag));
     mytag = tag + "_srmu" + "_General";
     book_HFolder(mytag, new HHtoWWbbSemiLeptonicHists(ctx,mytag));
+    mytag = tag + "_srmu" + "_NNInput";
+    book_HFolder(mytag, new HHtoWWbbSemiLeptonicMulticlassNNInputHists(ctx,mytag));
+    mytag = tag + "_srmu" + "_NNOutput";
+    book_HFolder(mytag, new HHtoWWbbSemiLeptonicMulticlassNNHists(ctx,mytag));
+
 
     /*
       mytag = tag+"_Muons";
@@ -242,6 +246,10 @@ void HHtoWWbbSemiLeptonicNNApplication::book_histograms(uhh2::Context& ctx, vect
 
 void HHtoWWbbSemiLeptonicNNApplication::fill_histograms(uhh2::Event& event, string tag, string region){
   string mytag = tag + "_" + region + "_General";
+  HFolder(mytag)->fill(event);
+  mytag = tag + "_" + region + "_NNInput";
+  HFolder(mytag)->fill(event);
+  mytag = tag + "_" + region + "_NNOutput";
   HFolder(mytag)->fill(event);
 
 
@@ -300,15 +308,13 @@ HHtoWWbbSemiLeptonicNNApplication::HHtoWWbbSemiLeptonicNNApplication(Context & c
   h_NNoutput4 = ctx.declare_event_output<double>("NNoutput4");
 
   string data_dir = "/nfs/dust/cms/user/frahmmat/CMSSW_10_2_X_v2/CMSSW_10_2_17/src/UHH2/HHtoWWbbSemiLeptonic/data//";
-  NNModule.reset(new NeuralNetworkModule(ctx, data_dir+"NNModel/4classes/test_model.pb", data_dir+"NNModel/4classes/test_model.config.pbtxt"));
+  NNModule.reset(new NeuralNetworkModule(ctx, data_dir+"NNModel/3classes/test_model.pb", data_dir+"NNModel/3classes/test_model.config.pbtxt"));
   
 
   // Book histograms
   vector<string> histogram_tags = {"Finalselection", "DNN_output0", "DNN_output1", "DNN_output2", "DNN_output3", "DNN_output4"};
   book_histograms(ctx, histogram_tags);
 
-  h_MulticlassNN_output.reset(new HHtoWWbbSemiLeptonicMulticlassNNHists(ctx, "MulticlassNN"));
-  h_NNInputVariables.reset(new HHtoWWbbSemiLeptonicMulticlassNNInputHists(ctx, "NNInputVariables"));
   //h_xx = ctx.get_handle<float>("xx");
 
   
@@ -328,12 +334,10 @@ bool HHtoWWbbSemiLeptonicNNApplication::process(Event & event) {
     
 
   string region = (string)event.get(h_region);
-  fill_histograms(event, "Finalselection", region);
-
 
   Variables_module->process(event);
   NNModule->process(event);
-  h_NNInputVariables->fill(event);
+
 
   vector<tensorflow::Tensor> NNoutputs = NNModule->GetOutputs();
   event.set(h_NNoutput, NNoutputs);
@@ -358,8 +362,8 @@ bool HHtoWWbbSemiLeptonicNNApplication::process(Event & event) {
   event.set(h_NNoutput2, out2);
   event.set(h_NNoutput3, out3);
   event.set(h_NNoutput4, out4);
+  fill_histograms(event, "Finalselection", region);
 
-  h_MulticlassNN_output->fill(event);
   // Categorization using NN output
   double max_score = 0.0;
   string max_score_tag = "";

@@ -68,6 +68,77 @@ Variables_NN::Variables_NN(uhh2::Context& ctx){
   h_mH_WW = ctx.get_handle<float>("mH_WW");
   //h_region = ctx.get_handle<TString>("region");
 
+
+
+  /*
+  NNInputs_id = {"mbb", "mWW", "mlnu", "mqq", "DeltaRlnu", "DeltaRbb", "DeltaRqq", "minDeltaRlj", "minDeltaRbj", "minDeltaRjj", "HT", "N_BTag", "N_Ak4", "mtop_lep_hyp1", "mtop_lep_hyp2", "mtop_had_hyp1", "mtop_had_hyp2", "MH_bb", "MH_WW", "Lep_pt", "Lep_eta", "Lep_phi", "Lep_E", "MET_pt", "MET_phi", "Ak4_j1_pt", "Ak4_j1_eta", "Ak4_j1_phi", "Ak4_j1_E", "Ak4_j1_m", "Ak4_j1_deepjetbscore", "Ak4_j2_pt", "Ak4_j2_eta", "Ak4_j2_phi", "Ak4_j2_E", "Ak4_j2_m", "Ak4_j2_deepjetbscore", "Ak4_j3_pt", "Ak4_j3_eta", "Ak4_j3_phi", "Ak4_j3_E", "Ak4_j3_m", "Ak4_j3_deepjetbscore", "Ak4_j4_pt", "Ak4_j4_eta", "Ak4_j4_phi", "Ak4_j4_E", "Ak4_j4_m", "Ak4_j4_deepjetbscore", "Ak4_j5_pt", "Ak4_j5_eta", "Ak4_j5_phi", "Ak4_j5_E", "Ak4_j5_m", "Ak4_j5_deepjetbscore", "Ak4_j6_pt", "Ak4_j6_eta", "Ak4_j6_phi", "Ak4_j6_E", "Ak4_j6_m", "Ak4_j6_deepjetbscore"};
+
+  NNInputs_map = {
+    {"mbb", h_mbb},
+    {"mWW", h_mWW},
+    {"mqq", h_mqq},
+    {"mlnu", h_mlnu},
+    {"DeltaRlnu", h_DeltaRlnu},
+    {"DeltaRbb", h_DeltaRbb},
+    {"DeltaRqq", h_DeltaRqq},
+    {"minDeltaRlj", h_minDeltaRlj},
+    {"minDeltaRbj", h_minDeltaRbj},
+    {"minDeltaRjj", h_minDeltaRjj},
+    {"HT", h_HT},
+    {"N_BTag", h_N_BTag},
+    {"N_Ak4", h_N_Ak4},
+    {"mtop_lep_hyp1", h_mtop_lep_hyp1},
+    {"mtop_lep_hyp2", h_mtop_lep_hyp2},
+    {"mtop_had_hyp1", h_mtop_had_hyp1},
+    {"mtop_had_hyp2", h_mtop_had_hyp2},
+    {"MH_bb", h_MH_bb},
+    {"MH_WW", h_MH_WW},
+    {"Lep_pt", h_Lep_pt},
+    {"Lep_eta", h_Lep_eta},
+    {"Lep_phi", h_Lep_phi},
+    {"Lep_E", h_Lep_E},
+    {"MET_pt", h_MET_pt},    
+    {"MET_phi", h_MET_phi},
+    {"Ak4_j1_pt", h_Ak4_j1_pt},    
+    {"Ak4_j1_eta", h_Ak4_j1_eta},
+    {"Ak4_j1_phi", h_Ak4_j1_phi},
+    {"Ak4_j1_E", h_Ak4_j1_E},
+    {"Ak4_j1_m", h_Ak4_j1_E},
+    {"Ak4_j1_deepjetbscore", h_Ak4_j1_deepjetbscore},
+    {"Ak4_j2_pt", h_Ak4_j2_pt},    
+    {"Ak4_j2_eta", h_Ak4_j2_eta},
+    {"Ak4_j2_phi", h_Ak4_j2_phi},
+    {"Ak4_j2_E", h_Ak4_j2_E},
+    {"Ak4_j2_m", h_Ak4_j2_E},
+    {"Ak4_j2_deepjetbscore", h_Ak4_j2_deepjetbscore},
+    {"Ak4_j3_pt", h_Ak4_j3_pt},
+    {"Ak4_j3_eta", h_Ak4_j3_eta},
+    {"Ak4_j3_phi", h_Ak4_j3_phi},
+    {"Ak4_j3_E", h_Ak4_j3_E},
+    {"Ak4_j3_m", h_Ak4_j3_E},
+    {"Ak4_j3_deepjetbscore", h_Ak4_j3_deepjetbscore},
+    {"Ak4_j4_pt", h_Ak4_j4_pt},
+    {"Ak4_j4_eta", h_Ak4_j4_eta},
+    {"Ak4_j4_phi", h_Ak4_j4_phi},
+    {"Ak4_j4_E", h_Ak4_j4_E},
+    {"Ak4_j4_m", h_Ak4_j4_E},
+    {"Ak4_j4_deepjetbscore", h_Ak4_j4_deepjetbscore},
+    {"Ak4_j5_pt", h_Ak4_j5_pt},
+    {"Ak4_j5_eta", h_Ak4_j5_eta},
+    {"Ak4_j5_phi", h_Ak4_j5_phi},
+    {"Ak4_j5_E", h_Ak4_j5_E},
+    {"Ak4_j5_m", h_Ak4_j5_E},
+    {"Ak4_j5_deepjetbscore", h_Ak4_j5_deepjetbscore},
+    {"Ak4_j6_pt", h_Ak4_j6_pt},
+    {"Ak4_j6_eta", h_Ak4_j6_eta},
+    {"Ak4_j6_phi", h_Ak4_j6_phi},
+    {"Ak4_j6_E", h_Ak4_j6_E},
+    {"Ak4_j6_m", h_Ak4_j6_E},
+    {"Ak4_j6_deepjetbscore", h_Ak4_j6_deepjetbscore}
+  };
+*/
+
+
   // output
 
   h_eventweight = ctx.declare_event_output<float> ("eventweight");
