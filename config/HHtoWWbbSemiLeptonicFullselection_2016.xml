@@ -2,8 +2,8 @@
 <!DOCTYPE JobConfiguration PUBLIC "" "JobConfig.dtd"[
 
 <!ENTITY TargetLumi      "35920">
-<!ENTITY PRESELdir       "/nfs/dust/cms/user/frahmmat/HHtoWWbbSemiLeptonic/2016/Preselection/NOMINAL">
-<!ENTITY SELdir          "/nfs/dust/cms/user/frahmmat/HHtoWWbbSemiLeptonic/2016/Fullselection/NOMINAL">
+<!ENTITY PRESELdir       "/nfs/dust/cms/user/tutusayl/HHtoWWbbSemiLeptonic/2016/Preselection/NOMINAL">
+<!ENTITY SELdir          "/nfs/dust/cms/user/tutusayl/HHtoWWbbSemiLeptonic/2016/Fullselection/NOMINAL">
 <!ENTITY b_Cacheable     "False">
 <!ENTITY NEVT            "-1">
 <!ENTITY PROOFdir        "/nfs/dust/cms/user/frahmmat/.proof2">
@@ -130,7 +130,7 @@
 
 <!--
 <ConfigParse NEventsBreak="150000" FileSplit="0" AutoResubmit="5"/>
-<ConfigSGE RAM="2" DISK="1" Mail="mathis.frahm@desy.de" Notification="as" Workdir="workdir_Full_2016"/>
+<ConfigSGE RAM="2" DISK="1" Mail="ayla.tutus@desy.de" Notification="as" Workdir="workdir_Full_2016"/>
 -->
 
 
@@ -190,7 +190,6 @@
 
 
 
-<!--
 		<InputData Lumi="1" NEventsMax="&NEVT;" Type="DATA" Version="DATA_Electron_B_2016v3" Cacheable="&b_Cacheable;">
 			<In FileName="&DATA_Electron_B;" Lumi="0.0"/>
 			<InputTree Name="AnalysisTree" />
@@ -284,7 +283,7 @@
 			<InputTree Name="AnalysisTree" />
 			<OutputTree Name="AnalysisTree" />
 		</InputData>
--->
+
 
 
 
@@ -563,7 +562,7 @@
 			<InputTree Name="AnalysisTree" />
 			<OutputTree Name="AnalysisTree" />
 		</InputData>
--->
+x
 		<InputData Lumi="18.03933848" NEventsMax="&NEVT;" Type="MC" Version="QCD_Mu_Pt-30to50_2016v3" Cacheable="&b_Cacheable;">
 			<In FileName="&QCD_Mu_Pt-30to50;" Lumi="0.0"/>
 			<InputTree Name="AnalysisTree" />
@@ -623,7 +622,7 @@
 			<InputTree Name="AnalysisTree" />
 			<OutputTree Name="AnalysisTree" />
 		</InputData>
-
+-->
 
 
 		<InputData Lumi="1.726427995" NEventsMax="&NEVT;" Type="MC" Version="QCD_EM_Pt-20to30_2016v3" Cacheable="&b_Cacheable;">
@@ -732,7 +731,7 @@
 	<Item Name="JetCollection" Value="jetsAk4Puppi" />
 	<Item Name="METName" Value="slimmedMETsPuppi" />
 	<Item Name="GenJetCollection" Value="slimmedGenJets" />
-	<!--  <Item Name="TopJetCollection" Value="patJetsAk8CHSJetsSoftDropPacked_daughters" />  --> 
+	<!--  <Item Name="TopJetCollection" Value="patJetsAk8CHSJetsSoftDropPacked_daughters" />  -->
 	<Item Name="TopJetCollection" Value="jetsAk8PuppiSubstructure_SoftDropPuppi" />
 	<Item Name="GenParticleCollection" Value="GenParticles" />
 	<Item Name="GenInfoName" Value="genInfo" />
