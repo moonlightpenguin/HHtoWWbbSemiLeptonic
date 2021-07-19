@@ -67,7 +67,7 @@ namespace uhh2examples {
     unique_ptr<Hists> h_btageff, h_NNInputVariables;
     std::unique_ptr<AnalysisModule> SF_muonIso, SF_muonID, SF_muonTrigger, SF_eleReco, SF_eleID, SF_eleTrigger, SF_btag;
     std::unique_ptr<Selection> nbtag1_medium_sel, nbtag2_medium_sel, njet4_sel, muon_trigger_sel1, muon_trigger_sel2, ele_trigger_sel1, ele_trigger_sel2, ele_trigger_sel3;
-    
+
 
     unique_ptr<HHtoWWbbMassReconstruction> mHH_reco;
     unique_ptr<HHChi2Discriminator> chi2_module;
@@ -89,7 +89,7 @@ namespace uhh2examples {
     uhh2::Event::Handle<float> h_mHH, h_chi2;
     uhh2::Event::Handle<float> h_mH_bb, h_chi2_H_bb;
     uhh2::Event::Handle<float> h_mH_WW, h_chi2_H_WW;
-    
+
     uhh2::Event::Handle<TString> h_region;
 
 
@@ -127,18 +127,18 @@ namespace uhh2examples {
       cout << "booking histograms with tag " << tag << endl;
       string mytag = tag + "_srele" + "_General";
       book_HFolder(mytag, new HHtoWWbbSemiLeptonicHists(ctx,mytag));
-      mytag = tag + "_srmu" + "_General";
-      book_HFolder(mytag, new HHtoWWbbSemiLeptonicHists(ctx,mytag));
+      //mytag = tag + "_srmu" + "_General";
+      //book_HFolder(mytag, new HHtoWWbbSemiLeptonicHists(ctx,mytag));
 
-      mytag = tag + "_srele" + "_Signal"; 
+      mytag = tag + "_srele" + "_Signal";
       book_HFolder(mytag, new HHtoWWbbSemiLeptonicGenHists(ctx,mytag));
-      mytag = tag + "_srmu" + "_Signal"; 
-      book_HFolder(mytag, new HHtoWWbbSemiLeptonicGenHists(ctx,mytag));
-      mytag = tag + "_srele" + "_Matched"; 
+      //mytag = tag + "_srmu" + "_Signal";
+      //book_HFolder(mytag, new HHtoWWbbSemiLeptonicGenHists(ctx,mytag));
+      mytag = tag + "_srele" + "_Matched";
       book_HFolder(mytag, new HHtoWWbbSemiLeptonicMatchedHists(ctx,mytag));
-      mytag = tag + "_srmu" + "_Matched"; 
-      book_HFolder(mytag, new HHtoWWbbSemiLeptonicMatchedHists(ctx,mytag));
-      
+      //mytag = tag + "_srmu" + "_Matched";
+      //book_HFolder(mytag, new HHtoWWbbSemiLeptonicMatchedHists(ctx,mytag));
+
       /*
 	mytag = tag+"_Muons";
 	book_HFolder(mytag, new MuonHists(ctx,mytag));
@@ -156,9 +156,9 @@ namespace uhh2examples {
     string mytag = tag + "_" + region + "_General";
     HFolder(mytag)->fill(event);
     if(is_signal){
-      mytag = tag + "_" + region + "_Signal"; 
+      mytag = tag + "_" + region + "_Signal";
       HFolder(mytag)->fill(event);
-      mytag = tag + "_" + region + "_Matched"; 
+      mytag = tag + "_" + region + "_Matched";
       HFolder(mytag)->fill(event);
     }
     /*
@@ -176,7 +176,7 @@ namespace uhh2examples {
 
 
   HHtoWWbbSemiLeptonicFullselectionModule::HHtoWWbbSemiLeptonicFullselectionModule(Context & ctx){
-    
+
     for(auto & kv : ctx.get_all()){
       cout << " " << kv.first << " = " << kv.second << endl;
     }
@@ -254,7 +254,7 @@ namespace uhh2examples {
 
 
     // initialize HH Mass Reconstruction
-    
+
     mHH_reco.reset(new HHtoWWbbMassReconstruction(ctx));
     chi2_module.reset(new HHChi2Discriminator(ctx, "HHHypotheses"));
 
@@ -331,9 +331,9 @@ namespace uhh2examples {
     if(event.muons->size() == 1 && event.electrons->size() == 0) region = "srmu";
     else if(event.electrons->size() == 1 && event.muons->size() == 0) region = "srele";
     else throw runtime_error("In HHtoWWbbSemiLeptonicFullSelectionModule: region is neither srmu or srele");
-    
 
-    mHH_reco->process(event);    
+
+    mHH_reco->process(event);
     chi2_module->process(event);
 
     bool pass_common = common->process(event);
@@ -342,26 +342,27 @@ namespace uhh2examples {
 
     double eventweight_lumi = event.weight;
     event.set(h_eventweight_lumi, eventweight_lumi);
-    
+
 
     SF_eleReco->process(event);
     SF_eleID->process(event);
-    
-    SF_muonID->process(event);
-    SF_muonIso->process(event);
-    
+
+    //SF_muonID->process(event);
+    //SF_muonIso->process(event);
+
     fill_histograms(event,"Cleaner", region);
 
     TString leptonregion = "muon";
     if(region == "srele") leptonregion = "ele";
 
     if(leptonregion == "muon"){
-      // Muon regions
-      if(!(muon_trigger_sel1->passes(event) || muon_trigger_sel2->passes(event))) return false;
-
-      //cout << "dataset_version: " << dataset_version << endl;
-      // Reject electron and photon data
-      if(!is_mc && !dataset_version.Contains("Muon")) return false;
+      // // Muon regions
+      // if(!(muon_trigger_sel1->passes(event) || muon_trigger_sel2->passes(event))) return false;
+      //
+      // //cout << "dataset_version: " << dataset_version << endl;
+      // // Reject electron and photon data
+      // if(!is_mc && !dataset_version.Contains("Muon")) return false;
+      return false;
     }
     else{
       // Electron regions
@@ -424,7 +425,7 @@ namespace uhh2examples {
     if(is_mHH_reconstructed) fill_histograms(event, "mHH_reconstructed", region);
 
     // DNN: for now only in srmu; should be done seperately for ech and much at some point
-    
+
     if(leptonregion != "muon") return false; // quick hack to only consider muons in DNN
     if(!njet4_sel->passes(event)) return false; // quick hack to only consider 4 Jet category
     Variables_module->process(event);

@@ -2,10 +2,10 @@
 <!DOCTYPE JobConfiguration PUBLIC "" "JobConfig.dtd"[
 
 <!ENTITY TargetLumi      "35920">
-<!ENTITY PRESELdir       "/nfs/dust/cms/user/frahmmat/HHtoWWbbSemiLeptonic/2016/Preselection/NOMINAL">
+<!ENTITY PRESELdir       "/nfs/dust/cms/user/tutusayl/HHtoWWbbSemiLeptonic/2016/Preselection/NOMINAL5">
 <!ENTITY b_Cacheable     "False">
-<!ENTITY NEVT            "-1">
-<!ENTITY PROOFdir        "/nfs/dust/cms/user/frahmmat/.proof2">
+<!ENTITY NEVT            "50000">
+<!ENTITY PROOFdir        "/nfs/dust/cms/user/tutusayl/.proof2">
 
 
 
@@ -136,8 +136,8 @@
 ]>
 
 <!--
-<ConfigParse NEventsBreak="0" FileSplit="25" AutoResubmit="5"/>
-<ConfigSGE RAM="2" DISK="1" Mail="mathis.frahm@desy.de" Notification="as" Workdir="workdir_Pre_2016"/>
+<ConfigParse NEventsBreak="0" FileSplit="200" AutoResubmit="5"/>
+<ConfigSGE RAM="4" DISK="1" Mail="ayla.tutus@desy.de" Notification="as" Workdir="workdir_Pre_2016"/>
 -->
 
 
@@ -151,7 +151,7 @@
 
 <!-- DATA -->
 
-		<InputData Lumi="1" NEventsMax="&NEVT;" Type="DATA" Version="DATA_Muon_B_2016v3" Cacheable="&b_Cacheable;">
+<!--		<InputData Lumi="1" NEventsMax="&NEVT;" Type="DATA" Version="DATA_Muon_B_2016v3" Cacheable="&b_Cacheable;">
 			&DATA_Muon_B;
 			<InputTree Name="AnalysisTree" />
 			<OutputTree Name="AnalysisTree" />
@@ -204,7 +204,7 @@
 			<OutputTree Name="AnalysisTree" />
 		</InputData>
 
-		<InputData Lumi="1" NEventsMax="&NEVT;" Type="DATA" Version="DATA_Electron_C_2016v3" Cacheable="&b_Cacheable;">
+	<InputData Lumi="1" NEventsMax="&NEVT;" Type="DATA" Version="DATA_Electron_C_2016v3" Cacheable="&b_Cacheable;">
 			&DATA_Electron_C;
 			<InputTree Name="AnalysisTree" />
 			<OutputTree Name="AnalysisTree" />
@@ -293,7 +293,7 @@
 			<InputTree Name="AnalysisTree" />
 			<OutputTree Name="AnalysisTree" />
 		</InputData>
-
+-->
 
 
 
@@ -301,11 +301,11 @@
 
 
 
-		<InputData Lumi="87304580.64" NEventsMax="&NEVT;" Type="MC" Version="HHtoWWbbSemiLeptonic_SM_2016v3" Cacheable="&b_Cacheable;">
+		<!-- <InputData Lumi="87304580.64" NEventsMax="&NEVT;" Type="MC" Version="HHtoWWbbSemiLeptonic_SM_2016v3" Cacheable="&b_Cacheable;">
 			&HHtoWWbbSemiLeptonic_SM;
 			<InputTree Name="AnalysisTree" />
 			<OutputTree Name="AnalysisTree" />
-		</InputData>
+		</InputData> -->
 
 
 
@@ -315,7 +315,7 @@
 <!-- BACKGROUND -->
 
 
-                <InputData Lumi="92260.16399" NEventsMax="&NEVT;" Type="MC" Version="TTbar_2016v3" Cacheable="&b_Cacheable;">
+                <!-- <InputData Lumi="92260.16399" NEventsMax="&NEVT;" Type="MC" Version="TTbar_2016v3" Cacheable="&b_Cacheable;">
 			&TTbar;
 			<InputTree Name="AnalysisTree" />
 			<OutputTree Name="AnalysisTree" />
@@ -644,12 +644,12 @@
 			<InputTree Name="AnalysisTree" />
 			<OutputTree Name="AnalysisTree" />
 		</InputData>
+-->
 
 
 
 
-
-		<InputData Lumi="1.726427995" NEventsMax="&NEVT;" Type="MC" Version="QCD_EM_Pt-20to30_2016v3" Cacheable="&b_Cacheable;">
+		<!-- <InputData Lumi="1.726427995" NEventsMax="&NEVT;" Type="MC" Version="QCD_EM_Pt-20to30_2016v3" Cacheable="&b_Cacheable;">
 			&QCD_EM_PT20to30;
 			<InputTree Name="AnalysisTree" />
 			<OutputTree Name="AnalysisTree" />
@@ -671,7 +671,7 @@
 			&QCD_EM_PT80to120;
 			<InputTree Name="AnalysisTree" />
 			<OutputTree Name="AnalysisTree" />
-		</InputData>
+		</InputData> -->
 
 		<InputData Lumi="968.7935399" NEventsMax="&NEVT;" Type="MC" Version="QCD_EM_Pt-120to170_2016v3" Cacheable="&b_Cacheable;">
 			&QCD_EM_PT120to170;
@@ -679,7 +679,7 @@
 			<OutputTree Name="AnalysisTree" />
 		</InputData>
 
-		<InputData Lumi="613.5121212" NEventsMax="&NEVT;" Type="MC" Version="QCD_EM_Pt-170to300_2016v3" Cacheable="&b_Cacheable;">
+		<!-- <InputData Lumi="613.5121212" NEventsMax="&NEVT;" Type="MC" Version="QCD_EM_Pt-170to300_2016v3" Cacheable="&b_Cacheable;">
 			&QCD_EM_PT170to300;
 			<InputTree Name="AnalysisTree" />
 			<OutputTree Name="AnalysisTree" />
@@ -729,7 +729,7 @@
 			&QCD_bcE_PT250toInf;
 			<InputTree Name="AnalysisTree" />
 			<OutputTree Name="AnalysisTree" />
-		</InputData>
+		</InputData> -->
 
 
 
